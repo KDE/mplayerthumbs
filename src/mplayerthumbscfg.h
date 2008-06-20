@@ -22,6 +22,7 @@
 #define _MPLAYERTHUMBSCONFIG_
 #include <kconfigdialog.h>
 #include "mplayerthumbs.h"
+#include "ui_configDialog.h"
 
 class KLineEdit;
 class MPlayerThumbsConfig : public KConfigDialog
@@ -32,6 +33,8 @@ class MPlayerThumbsConfig : public KConfigDialog
         ~MPlayerThumbsConfig();
     private:
         KLineEdit *kcfg_mplayerbin;
+        Ui::configDialog *dialogUI;
+
 public slots:
     void autoFindPath();
 };

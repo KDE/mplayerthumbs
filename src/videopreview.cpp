@@ -88,7 +88,7 @@ bool VideoPreview::startAndWaitProcess(const QStringList &args) {
 
 bool VideoPreview::create(const QString &path, int width, int height, QImage &img)
 {
-    MPlayerThumbsCfg *cfg=new MPlayerThumbsCfg();
+    MPlayerThumbsCfg *cfg=MPlayerThumbsCfg::self();
     QFileInfo fi(path);
         kDebug(DBG_AREA) << "videopreview: file extension=\"" << fi.suffix().trimmed() << "\"\n";
         if( fi.suffix().trimmed().length() && !cfg->noextensions().filter(fi.suffix().trimmed(), Qt::CaseInsensitive)
@@ -138,7 +138,7 @@ bool VideoPreview::create(const QString &path, int width, int height, QImage &im
     if (! startAndWaitProcess(args) ) return NULL;
 
     QString information=QString(mplayerprocess->readAllStandardOutput() );
-    kDebug(DBG_AREA) << "videopreview: output from process: " << information << endl;
+//     kDebug(DBG_AREA) << "videopreview: output from process: " << information << endl;
     QRegExp findInfos("ID_VIDEO_FPS=([\\d]*).*ID_LENGTH=([\\d]*).*");
     if(findInfos.indexIn( information) == -1 )
     {

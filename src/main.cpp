@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 
     /// @todo do something with the command line args here
 
-    mainWin = new MPlayerThumbsConfig(0, "configDialog", new MPlayerThumbsCfg() );
+    mainWin = new MPlayerThumbsConfig(0, "configDialog", MPlayerThumbsCfg::self() );
     app.setTopWidget( mainWin );
     mainWin->show();
 
