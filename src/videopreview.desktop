@@ -57,5 +57,5 @@ Name[zu]=Amafayela Evidiyo (MPlayerThumbs)
 ServiceTypes=ThumbCreator
 CacheThumbnail=true
 IgnoreMaximumSize=true
-MimeType=video/*;application/vnd.ms-asf;application/vnd.rn-realmedia
+MimeType=video/*;application/vnd.ms-asf;application/vnd.rn-realmedia;
 X-KDE-Library=videopreview
