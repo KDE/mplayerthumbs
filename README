@@ -1,2 +1,26 @@
-Run mplayerthumbsconfig to set manually mplayer path
+MPlayerThumbs is a thumbnail generator for all KDE file managers (konqueror, dolphin, ...)
+It needs mplayer (of course) to generate thumbnails, and it contains no linking to any library, so in a x86_64 system you can freely use the 32bit mplayer binary with win32codecs by configuring the application launching the mplayerthumbsconfig helper application.
+
+Quickly installing mplayerthumbs (install instruction adapted from the kmplayer package, thanks folks!)
+Untar the source package
+  tar xfj mplayerthumbs-<version>.tar.bz2
+Create a build directory, eg /tmp/mplayerthumbs-build and enter this directory
+Set your environment for building KDE4 apps
+  export QTDIR=path-to-qt4
+  export KDEDIR=path-to-kde4
+  export KDEDIRS=$KDEDIR
+  export KDE_BUILD=$KDEDIR
+  export DBUSDIR=$KDEDIR
+  export LD_LIBRARY_PATH=$QTDIR/lib:$KDEDIR/lib:$LD_LIBRARY_PATH
+  export PKG_CONFIG_PATH=$DBUSDIR/lib/pkgconfig:/usr/lib/pkgconfig
+  export PATH=$QTDIR/bin:$KDEDIR/bin:$PATH
+Run cmake
+  cmake -DCMAKE_INSTALL_PREFIX=$KDEDIR -DCMAKE_BUILD_TYPE=release path-to-mplayerthumbs-source
+Run make
+  make
+Install as root
+  make install
+
+Enjoy!
+
 
