@@ -1,7 +1,4 @@
-
-include_directories(${KDE4_INCLUDES} ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} )
-
-add_subdirectory(mplayerthumbsconfig)
+# add_subdirectory(mplayerthumbsconfig)
 
 
 ########### next target ###############
@@ -23,29 +20,12 @@ install(FILES  mplayerthumbs.kcfg DESTINATION ${KCFG_INSTALL_DIR})
 install(FILES  videopreview.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 install(FILES  sprocket-small.png sprocket-medium.png sprocket-large.png DESTINATION ${DATA_INSTALL_DIR}/videothumbnail)
 
+set(mplayerthumbsconfig_SRCS main.cpp mplayerthumbscfg.cpp)
+kde4_add_kcfg_files(mplayerthumbsconfig_SRCS mplayerthumbs.kcfgc)
 
+kde4_add_executable(mplayerthumbsconfig ${mplayerthumbsconfig_SRCS})
 
-#original Makefile.am contents follow:
+target_link_libraries(mplayerthumbsconfig ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} ${videopreview} )
 
-#INCLUDES    = $(all_includes)
-#METASOURCES = AUTO
-#
-#SUBDIRS = . mplayerthumbsconfig
-#
-#kde_module_LTLIBRARIES = videopreview.la
-#
-#videopreview_la_SOURCES = videopreview.cpp mplayerthumbs.kcfgc
-#videopreview_la_LDFLAGS = -avoid-version -module $(all_libraries) $(KDE_PLUGIN)
-#
-#protocoldir = $(kde_servicesdir)
-#
-#messages: rc.cpp
-#	$(EXTRACTRC) `find . -name \*.ui -o -name \*.rc` > rc.cpp
-#	$(XGETTEXT) *.cpp -o $(podir)/videopreview.pot
-#protocol_DATA = videopreview.desktop
-#videopreview_la_LIBADD = $(LIB_KDECORE)
-#
-#videothumbnail_DATA = sprocket-small.png sprocket-medium.png sprocket-large.png
-#videothumbnaildir = $(kde_datadir)/videothumbnail
-#kde_kcfg_DATA = mplayerthumbs.kcfg
-#
+install(TARGETS mplayerthumbsconfig ${INSTALL_TARGETS_DEFAULT_ARGS})
+

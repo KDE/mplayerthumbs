@@ -28,19 +28,25 @@
 #include <kdebug.h>
 #include <qtimer.h>
 #include <keditlistbox.h>
+#include <QVBoxLayout>
 
 MPlayerThumbsConfig::MPlayerThumbsConfig(QWidget *parent, const QString &name, MPlayerThumbsCfg *config)
     : KConfigDialog(parent, name, config)
 {
-    Q3VBox *vbox=new Q3VBox(0);
-    vbox->setSpacing( 5);
-    new QLabel(i18n("Enter here the path for mplayer executable file."), vbox);
-    kcfg_mplayerbin=new KLineEdit( vbox, "kcfg_mplayerbin");
-    new QLabel(i18n("Custom arguments for mplayer."), vbox);
-    new KLineEdit( vbox, "kcfg_customargs");
-    new KEditListBox( i18n("Blacklisted File Extensions"),
-            vbox, "kcfg_noextensions", true, KEditListBox::Add | KEditListBox::Remove);
+    QWidget *vbox = new QWidget;
+    QVBoxLayout *layout = new QVBoxLayout;
+//     vbox->setSpacing( 5);
+    layout->addWidget(new QLabel(i18n("Enter here the path for mplayer executable file.") ) );
+    kcfg_mplayerbin=new KLineEdit("kcfg_mplayerbin");
+    layout->addWidget(kcfg_mplayerbin);
+    layout->addWidget(new QLabel(i18n("Custom arguments for mplayer.")));
+    KLineEdit *lineedit=new KLineEdit();
+    lineedit->setObjectName("kcfg_customargs");
+    layout->addWidget(lineedit);
+    layout->addWidget(new KEditListBox( i18n("Blacklisted File Extensions"), vbox,
+            "kcfg_noextensions", true, KEditListBox::Add | KEditListBox::Remove) );
     addPage( vbox, i18n("General"), "mplayer" );
+    vbox->setLayout(layout);
     kDebug() << "config->mplayerbin().isNull()::" << config->mplayerbin().length() << endl;
     if(!config->mplayerbin().length() )
         QTimer::singleShot( 100, this, SLOT(autoFindPath()));

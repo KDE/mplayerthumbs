@@ -31,19 +31,13 @@ static const char description[] =
 
 static const char version[] = "0.1";
 
-static KCmdLineOptions options[] =
-{
-//    { "+[URL]", I18N_NOOP( "Document to open" ), 0 },
-    KCmdLineLastOption
-};
-
 int main(int argc, char **argv)
 {
-    KAboutData about("MPlayerThumbsConfig", I18N_NOOP("MPlayerThumbsConfig"), version, description,
-                     KAboutData::License_GPL, "(C) 2006 Marco Gulino", 0, 0, "marco@kmobiletools.org");
-    about.addAuthor( "Marco Gulino", 0, "marco@kmobiletools.org" );
+    KAboutData about("MPlayerThumbsConfig", 0, ki18n(I18N_NOOP("MPlayerThumbsConfig")), version, ki18n(description),
+                     KAboutData::License_GPL, ki18n("(C) 2006 Marco Gulino"));
+    about.addAuthor( ki18n("Marco Gulino"), KLocalizedString(), "marco@kmobiletools.org" );
     KCmdLineArgs::init(argc, argv, &about);
-    KCmdLineArgs::addCmdLineOptions( options );
+//     KCmdLineArgs::addCmdLineOptions( options );
     KApplication app;
     MPlayerThumbsConfig *mainWin = 0;
 
@@ -54,15 +48,15 @@ int main(int argc, char **argv)
 //     else
 //     {
         // no session.. just start up normally
-    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+//     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
     /// @todo do something with the command line args here
 
     mainWin = new MPlayerThumbsConfig(0, "configDialog", new MPlayerThumbsCfg() );
-    app.setMainWidget( mainWin );
+    app.setTopWidget( mainWin );
     mainWin->show();
 
-    args->clear();
+//     args->clear();
 //     }
 
     // mainWin has WDestructiveClose flag by default, so it will delete itself.
