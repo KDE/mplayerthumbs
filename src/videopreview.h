@@ -32,7 +32,6 @@ class QProcess;
 class Q3CString;
 class KTempDir;
 class KRandomSequence;
-class KPixmapSplitter;
 #include <qobject.h>
 
 class VideoPreview : public QObject, public ThumbCreator
@@ -47,7 +46,6 @@ Q_OBJECT
         QPixmap getFrame(const QString &path, int flags);
         static uint imageVariance(QImage image );
     private:
-        KPixmapSplitter *m_splitter;
         char *m_data;
         int m_dataSize;
         QPixmap m_pixmap;

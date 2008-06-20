@@ -25,7 +25,6 @@
 #include <qimage.h>
 
 #include <kstandarddirs.h>
-//#include <kpixmapsplitter.h>
 #include <kmimetype.h>
 #include <QDir>
 #include <qpainter.h>
@@ -56,15 +55,13 @@ extern "C"
 }
 
 VideoPreview::VideoPreview()
-    : m_splitter(0),
-      m_data(0),
+    : m_data(0),
       m_dataSize(0)
 {
 }
 
 VideoPreview::~VideoPreview()
 {
-    delete m_splitter;
     delete [] m_data;
     delete tmpdir;
     delete rand;
