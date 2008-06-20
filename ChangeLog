@@ -1,0 +1,42 @@
+2006-07-10 MPlayerThumbs 0.5b
+	* Fixed thumbnail generation when files have not an extension.
+
+2006-07-01 MPlayerThumbs 0.5
+	* Adding -ao null option instead of -nosound
+	* Adding custom arguments configuration to mplayerthumbsconfig
+	* Cleaning code, removing check for local/remote files, and threating
+	all them as local, since kio already provides us a good support for
+	remote files.
+	* Option to add "blacklisted" extensions with mplayerthumbsconfig
+
+2006-06-29 MPlayerThumbs 0.4b
+	* Changing strips color to light blue (so you can visually distinguish
+	mplayer thumbs from xine ones)
+	* Fixing compilation order
+
+2006-06-29 MPlayerThumbs 0.4
+	* Removed configure script for mplayer/mplayer-bin autodetection,
+	instead now there's a configuration utility, mplayerthumbsconfig.
+	* Checking for "good" frames, discarding them when they've not enough
+	contrast.
+	* Code cleaning, new methods layout.
+	* Fixed thumbnails generation by setting manually -nocache option in mplayer.
+	* Added a configure entry to disable strips.
+
+2006-06-25 MPlayerThumbs 0.3
+	* Seeking to a random position between 15% and 60%.
+	* Better exceptions handling.
+	* Adding video strips (or "holes") from xine plugin.
+	* Adding a "(MPlayerThumbs)" identifier in konqueror "View->Preview"
+	menu.
+	* Fixed compilation with KDE <= 3.5.1
+
+2006-06-23 MPlayerThumbs 0.2
+	* Using mplayer -idx to fix seeking in corrupted files.
+	* Using original aspect ratio.
+	* Reading the fourth frame instead of the first seems to give a better
+	image.
+
+2006-06-20 MPlayerThumbs 0.1
+	* Initial release.
+

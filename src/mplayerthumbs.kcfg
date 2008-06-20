@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE kcfg SYSTEM "http://www.kde.org/standards/kcfg/1.0/kcfg.dtd">
+<kcfg>
+    <kcfgfile name="mplayerthumbs"/> 
+    <group name="MPlayerThumbsCfg"> 
+        <entry name="mplayerbin" type="String">
+            <label>Full path of the mplayer binary to use.</label>
+        </entry>
+	<entry name="noextensions" type="StringList">
+	    <label>File extensions that mplayerthumbs should avoid</label>
+	</entry>
+    <entry name="customargs" type="String">
+        <label>Append custom arguments to mplayer</label>
+    </entry>
+    </group>
+</kcfg>
