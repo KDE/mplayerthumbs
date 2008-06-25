@@ -172,23 +172,25 @@ bool VideoPreview::create(const QString &path, int width, int height, QImage &im
     Copyright (C) 2003 Ewald Snel <ewald@rambo.its.tudelft.nl>
      * */
 //     QPixmap pix( createThumbnail( &frame, width, height ) );
-#ifdef STRIPS_SUPPORT
-    QPainter painter( &pix );
-    QPixmap sprocket;
+//#ifdef STRIPS_SUPPORT
+    if(cfg->createStrips() ) {
+        QPainter painter( &pix );
+        QPixmap sprocket;
 
-    if (pix.height() < 60)
-        sprocket = QPixmap(locate( "data", "videothumbnail/sprocket-small.png" ));
-    else if (pix.height() < 90)
-        sprocket = QPixmap(locate( "data", "videothumbnail/sprocket-medium.png" ));
-    else
-        sprocket = QPixmap(locate( "data", "videothumbnail/sprocket-large.png" ));
+        kDebug(DBG_AREA) << "videopreview: using strip image sprocket: " << KStandardDirs::locate( "data", "videothumbnail/sprocket-small.png" ) << endl;
+        if (pix.height() < 60)
+            sprocket = QPixmap(KStandardDirs::locate( "data", "videothumbnail/sprocket-small.png" ));
+        else if (pix.height() < 90)
+            sprocket = QPixmap(KStandardDirs::locate( "data", "videothumbnail/sprocket-medium.png" ));
+        else
+            sprocket = QPixmap(KStandardDirs::locate( "data", "videothumbnail/sprocket-large.png" ));
 
-    for (int y = 0; y < pix.height() + sprocket.height(); y += sprocket.height()) {
-        painter.drawPixmap( 0, y, sprocket );
-    }
-
-    // End of xine-artsplugin code
-#endif
+        for (int y = 0; y < pix.height() + sprocket.height(); y += sprocket.height()) {
+            painter.drawPixmap( 0, y, sprocket );
+        }
+}
+        // End of xine-artsplugin code
+//#endif
     img = pix.toImage();
 
    if(tmpdir) tmpdir->unlink();

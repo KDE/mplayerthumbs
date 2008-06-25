@@ -12,5 +12,9 @@
     <entry name="customargs" type="String">
         <label>Append custom arguments to mplayer</label>
     </entry>
+    <entry name="createStrips" type="Bool">
+        <label>Create strips in thumbnail</label>
+        <default>true</default>
+    </entry>
     </group>
 </kcfg>
