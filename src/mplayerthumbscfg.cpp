@@ -29,6 +29,10 @@
 #include <qtimer.h>
 #include <keditlistbox.h>
 #include <QVBoxLayout>
+#include <kmessagebox.h>
+#include <kio/deletejob.h>
+
+const QString MPlayerThumbsConfig::thumbnailsDir( QDir::homePath() + "/.thumbnails/" );
 
 
 MPlayerThumbsConfig::MPlayerThumbsConfig(QWidget *parent, const QString &name, MPlayerThumbsCfg *config)
@@ -38,6 +42,8 @@ MPlayerThumbsConfig::MPlayerThumbsConfig(QWidget *parent, const QString &name, M
     QWidget *dialogWidget=new QWidget();
     dialogUI->setupUi(dialogWidget);
     addPage( dialogWidget, i18n("General"), "mplayer" );
+    connect( dialogUI->clean_cache, SIGNAL(clicked() ), this, SLOT(cleanCache() ) );
+    setFaceType(Plain);
     if(!config->mplayerbin().length() )
         QTimer::singleShot( 100, this, SLOT(autoFindPath()));
 
@@ -60,3 +66,12 @@ void MPlayerThumbsConfig::autoFindPath()
     kDebug() << "Trying to set player path to " << playerPath << endl;
     dialogUI->kcfg_mplayerbin->setPath( playerPath );
 }
+
+void MPlayerThumbsConfig::cleanCache() {
+    int doClean = KMessageBox::warningContinueCancel(this, i18n("Cleaning the cache will delete all the previously generated thumbnail.\nSince the cache is unique, also other file type thumbnails will be deleted.\nDo you really want to clean up the cache?") );
+    if (doClean!= KMessageBox::Continue ) return;
+
+    kDebug() << "Cleaning cache from " << thumbnailsDir << endl;
+    KIO::del( thumbnailsDir );
+}
+

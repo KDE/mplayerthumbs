@@ -34,6 +34,8 @@ class KTempDir;
 class KRandomSequence;
 #include <qobject.h>
 
+
+
 class VideoPreview : public QObject, public ThumbCreator
 {
 Q_OBJECT

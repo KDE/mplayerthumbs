@@ -24,6 +24,7 @@
 #include "mplayerthumbs.h"
 #include "ui_configDialog.h"
 
+
 class KLineEdit;
 class MPlayerThumbsConfig : public KConfigDialog
 {
@@ -31,12 +32,14 @@ class MPlayerThumbsConfig : public KConfigDialog
     public:
         MPlayerThumbsConfig(QWidget *parent, const QString &name, MPlayerThumbsCfg *config);
         ~MPlayerThumbsConfig();
+        static const QString thumbnailsDir;
     private:
         KLineEdit *kcfg_mplayerbin;
         Ui::configDialog *dialogUI;
 
 public slots:
     void autoFindPath();
+    void cleanCache();
 };
 
 #endif
