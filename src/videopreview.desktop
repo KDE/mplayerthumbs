@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=Video Files (MPlayerThumbs)
+Name[et]=Videofailid (MPlayerThumbs)
 ServiceTypes=ThumbCreator
 CacheThumbnail=true
 IgnoreMaximumSize=true
