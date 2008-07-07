@@ -23,6 +23,7 @@
 #include <qfile.h>
 #include <qpixmap.h>
 #include <qimage.h>
+#include <QtCore/QVarLengthArray>
 
 #include <kstandarddirs.h>
 #include <kmimetype.h>
@@ -253,7 +254,7 @@ uint VideoPreview::imageVariance(QImage image )
     uint avg=0;
     uint bytes=image.numBytes();
     uint STEPS=bytes/2;
-    uchar pivot[STEPS];
+    QVarLengthArray<uchar> pivot(STEPS);
     kDebug(DBG_AREA) << "Using " << STEPS << " steps\n";
     uchar *bits=image.bits();
     // First pass: get pivots and taking average
