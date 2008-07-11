@@ -39,6 +39,7 @@
 #include <kurl.h>
 #include <math.h>
 #include <qfileinfo.h>
+#include <kcodecs.h>
 
 #include "mplayerthumbs.h"
 
@@ -70,6 +71,7 @@ VideoPreview::~VideoPreview()
 }
 
 bool VideoPreview::startAndWaitProcess(const QStringList &args) {
+    kDebug(DBG_AREA) << "videopreview: starting process with args: " << args << endl;
     mplayerprocess->start( args.join(" ") );
     if(! mplayerprocess->waitForStarted() ) {
         kDebug(DBG_AREA) << "videopreview: PROCESS NOT STARTED!!! exiting\n";
@@ -116,6 +118,7 @@ bool VideoPreview::create(const QString &path, int width, int height, QImage &im
     fileinfo.fps=0;
     tmpdir=new KTempDir();
     if(tmpdir->name().isNull() ) return false;
+    kDebug(DBG_AREA) << "videopreview: using temp directory " << tmpdir->name() << endl;
 
     rand=new KRandomSequence(QDateTime::currentDateTime().toTime_t());
     mplayerprocess=new QProcess();
@@ -165,7 +168,7 @@ bool VideoPreview::create(const QString &path, int width, int height, QImage &im
     }
     if(pix.isNull() )
     {
-       if(tmpdir) tmpdir->unlink();
+        tryUnlink(tmpdir);
         return false;
     }
     /** From videocreator.cpp - xine_artsplugin
@@ -194,8 +197,12 @@ bool VideoPreview::create(const QString &path, int width, int height, QImage &im
 //#endif
     img = pix.toImage();
 
-   if(tmpdir) tmpdir->unlink();
+    tryUnlink(tmpdir);
     return true;
+}
+
+void VideoPreview::tryUnlink(KTempDir *dir) {
+    if(dir) dir->unlink();
 }
 
 QPixmap VideoPreview::getFrame(const QString &path, int flags)
@@ -228,17 +235,22 @@ QPixmap VideoPreview::getFrame(const QString &path, int flags)
         // If we can't skip to a random frame, let's try playing 10 seconds.
         args << "-frames" << QString::number( fileinfo.fps*10 );
     }
+    KMD5 md5builder(path.toLatin1() );
+    QString md5file=md5builder.hexDigest().data();
+    QString tmpDirPath = tmpdir->name() + md5file + QDir::separator();
     args << "-nocache" << "-idx" /*@TODO check if it's too slow..*/ << "-ao" << "null"/*"-nosound" << */<< "-speed" << "99"  /*<< "-sstep" << "5"*/
-            << "-vo" << QString("jpeg:outdir=%1").arg(tmpdir->name() ) << "-vf" << QString("scale=%1:%2").arg(fileinfo.towidth).arg(fileinfo.toheight);
+            << "-vo" << QString("jpeg:outdir=%1").arg(tmpDirPath ) << "-vf" << QString("scale=%1:%2").arg(fileinfo.towidth).arg(fileinfo.toheight);
     args+=customargs;
 
     if (! startAndWaitProcess(args) ) return NULL;
 
-    if (QDir(tmpdir->name() ).entryList( QStringList("*.jpg") ).isEmpty() ) return false;
+    kDebug(DBG_AREA) << "videopreview: temp dir '" << tmpDirPath << "'\n";
 
-    QString lastframe=QDir(tmpdir->name() ).entryList( QStringList("*.jpg") ).last();
+    if (QDir(tmpDirPath ).entryList( QStringList("*.jpg") ).isEmpty() ) return false;
+
+    QString lastframe=QDir(tmpDirPath ).entryList( QStringList("*.jpg") ).last();
     kDebug(DBG_AREA) << "videopreview: LastFrame==" << lastframe << endl;
-    QPixmap retpix(tmpdir->name().append( lastframe ));
+    QPixmap retpix(tmpDirPath.append( lastframe ));
     return retpix;
 }
 

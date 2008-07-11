@@ -47,6 +47,7 @@ Q_OBJECT
     protected:
         QPixmap getFrame(const QString &path, int flags);
         static uint imageVariance(QImage image );
+        void tryUnlink(KTempDir *dir);
     private:
         char *m_data;
         int m_dataSize;
