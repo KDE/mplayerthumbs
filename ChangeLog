@@ -1,3 +1,9 @@
+2008-07-18 MPlayerThumbs 1.1
+	* Re-adding strips, and making them dynamically configurable
+	* Adding option to clear cache in mplayerthumbsconfig
+	* Optimizing the code to use an unique directory to store thumbs, to avoid
+	confusing thumbs for different files
+
 2008-06-20 MPlayerThumbs 1.0
 	* First stable release
 	* Porting to KDE 4
