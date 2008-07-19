@@ -2,6 +2,7 @@
 Type=Service
 Name=Video Files (MPlayerThumbs)
 Name[et]=Videofailid (MPlayerThumbs)
+Name[sv]=Videofiler (Mplayer miniatyrbilder)
 ServiceTypes=ThumbCreator
 CacheThumbnail=true
 IgnoreMaximumSize=true
