@@ -1,3 +1,6 @@
+2009-02-11 MPlayerThumbs 1.2
+	* Fixed build with kde 4.2 (thanks Pino Toscano)
+
 2008-07-18 MPlayerThumbs 1.1
 	* Re-adding strips, and making them dynamically configurable
 	* Adding option to clear cache in mplayerthumbsconfig
