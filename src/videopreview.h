@@ -29,7 +29,6 @@
 #include <kio/thumbcreator.h>
 
 class QProcess;
-class Q3CString;
 class KTempDir;
 class KRandomSequence;
 #include <qobject.h>
