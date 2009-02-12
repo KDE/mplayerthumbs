@@ -34,7 +34,8 @@ class KRandomSequence;
 #include <qobject.h>
 
 
-
+class QFileInfo;
+class MPlayerThumbsCfg;
 class VideoPreview : public QObject, public ThumbCreator
 {
 Q_OBJECT
@@ -43,6 +44,7 @@ Q_OBJECT
         virtual ~VideoPreview();
         virtual bool create(const QString &path, int width, int height, QImage &img);
         virtual Flags flags() const;
+	struct FileInformation { int towidth; int toheight; int fps; int seconds; bool isValid; };
     protected:
         QPixmap getFrame(const QString &path, int flags);
         static uint imageVariance(QImage image );
@@ -56,9 +58,12 @@ Q_OBJECT
         KTempDir *tmpdir;
         KRandomSequence *rand;
         QString playerBin;
+	bool hasBlacklistedExtension(QFileInfo *fileInfo, MPlayerThumbsCfg *cfg);
+	bool findPlayerBin(MPlayerThumbsCfg *cfg);
         bool startAndWaitProcess(const QStringList &args);
+	FileInformation findFileInfo(QString filePath);
         enum frameflags { framerandom=0x1, framestart=0x2, frameend=0x4 };
-        struct { int towidth; int toheight; int fps; int seconds; } fileinfo;
+        FileInformation fileinfo;
 };
 
 #endif

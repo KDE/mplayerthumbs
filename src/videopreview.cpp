@@ -20,7 +20,7 @@
 
 #include "videopreview.h"
 
-#include <qfile.h>
+#include <QFile>
 #include <qpixmap.h>
 #include <qimage.h>
 #include <QtCore/QVarLengthArray>
@@ -38,7 +38,7 @@
 #include <ktempdir.h>
 #include <kurl.h>
 #include <math.h>
-#include <qfileinfo.h>
+#include <QFileInfo>
 #include <kcodecs.h>
 
 #include "mplayerthumbs.h"
@@ -90,75 +90,24 @@ bool VideoPreview::create(const QString &path, int width, int height, QImage &im
 {
     MPlayerThumbsCfg *cfg=MPlayerThumbsCfg::self();
     QFileInfo fi(path);
-        kDebug(DBG_AREA) << "videopreview: file extension=\"" << fi.suffix().trimmed() << "\"\n";
-        if( fi.suffix().trimmed().length() && !cfg->noextensions().filter(fi.suffix().trimmed(), Qt::CaseInsensitive)
-         .isEmpty() )
-    {
-        delete cfg;
-        kDebug(DBG_AREA) << "videopreview: matched extension " << fi.suffix().prepend('.') << "; exiting.\n";
-        return false;
+    if(hasBlacklistedExtension(&fi, cfg) || ! findPlayerBin(cfg) ) {
+      delete cfg;
+      return false;
     }
-    playerBin=cfg->mplayerbin();
-    customargs=cfg->customargs().split(" ");
-    kDebug(DBG_AREA) << "videopreview: customargs=" << cfg->customargs() << " ;;;; " << customargs << endl;
-    delete cfg;
-    if(playerBin.length()) kDebug(DBG_AREA) << "videopreview: found playerbin from config: " << playerBin << endl;
-    else
-    {
-        playerBin=KStandardDirs::findExe("mplayer-bin");
-        if(!playerBin.length()) playerBin=KStandardDirs::findExe("mplayer");
-        if(!playerBin.length())
-        {
-            kDebug(DBG_AREA) << "videopreview: mplayer not found, exiting. Run mplayerthumbsconfig to setup mplayer path manually.\n";
-            return false;
-        }
-        kDebug(DBG_AREA) << "videopreview: found playerbin from path: " << playerBin << endl;
-    }
-    fileinfo.seconds=0;
-    fileinfo.fps=0;
-    tmpdir=new KTempDir();
-    if(tmpdir->name().isNull() ) return false;
-    kDebug(DBG_AREA) << "videopreview: using temp directory " << tmpdir->name() << endl;
 
-    rand=new KRandomSequence(QDateTime::currentDateTime().toTime_t());
-    mplayerprocess=new QProcess();
-    int flags=0;
-    KUrl furl(path);
-    kDebug(DBG_AREA) << "videopreview: url=" << furl << "; local:" << furl.isLocalFile() << endl;
+    FileInformation fileinfo=findFileInfo(path);
+    if(! fileinfo.isValid) return false;
     fileinfo.towidth=width;
     fileinfo.toheight=height;
     QPixmap pix;
-//    if(furl.isLocalFile())
-//    {
+    int flags=0;
     flags=framerandom;
-    QStringList args;
-    args << playerBin << QString("\"" + path + "\"") << "-nocache" << "-identify" << "-vo" << "null" << "-frames" << "0"/* << "-nosound" */<< "-ao" << "null";
-    args+= customargs;
-
-    kDebug(DBG_AREA) << "videopreview: starting process: --_" << " " << args.join(" ") << "_--\n";
-    if (! startAndWaitProcess(args) ) return NULL;
-
-    QString information=QString(mplayerprocess->readAllStandardOutput() );
-//     kDebug(DBG_AREA) << "videopreview: output from process: " << information << endl;
-    QRegExp findInfos("ID_VIDEO_FPS=([\\d]*).*ID_LENGTH=([\\d]*).*");
-    if(findInfos.indexIn( information) == -1 )
-    {
-        kDebug(DBG_AREA) << "videopreview: No information found, exiting\n";
-        return NULL;
-    }
-    fileinfo.seconds =findInfos.cap(2).toInt();
-    fileinfo.fps=findInfos.cap(1).toInt();
-    
-    kDebug(DBG_AREA) << "videopreview: find length=" << fileinfo.seconds << ", fps=" << fileinfo.fps << endl;
-/*    } else
-    {
-        flags=frameend;
-    }*/
-#define LASTTRY 3
+    #define LASTTRY 3
     for(int i=0; i<=LASTTRY; i++)
     {
         kDebug(DBG_AREA) << "videopreview: try " << i << endl;
-        pix=getFrame(path, ((i<LASTTRY) ? flags : framestart ) );
+flags=((i<LASTTRY) ? flags : framestart );
+        pix=getFrame(path, flags );
         if(!pix.isNull()) {
             uint variance=imageVariance(pix.toImage()/*.bits(),( (width+ 7) & ~0x7), width, height, 1 */);
             kDebug(DBG_AREA) << "videopreview: " << QFileInfo(path).fileName() << " frame variance: " << variance << "; " << 
@@ -283,5 +232,75 @@ uint VideoPreview::imageVariance(QImage image )
     }
     return delta/STEPS;
 }
+
+bool VideoPreview::hasBlacklistedExtension(QFileInfo* fileInfo, MPlayerThumbsCfg *cfg) {
+    QString extension=fileInfo->suffix().trimmed();
+    kDebug(DBG_AREA) << "videopreview: file extension=\"" << extension << "\"\n";
+    if( extension.length() && !cfg->noextensions().filter(extension, Qt::CaseInsensitive).isEmpty() )
+    {
+        kDebug(DBG_AREA) << "videopreview: matched extension " << extension.prepend('.') << "; exiting.\n";
+        return true;
+    }
+    return false;
+}
+
+bool VideoPreview::findPlayerBin( MPlayerThumbsCfg* cfg) {
+    playerBin=cfg->mplayerbin();
+    customargs=cfg->customargs().split(" ");
+    kDebug(DBG_AREA) << "videopreview: customargs=" << cfg->customargs() << " ;;;; " << customargs << endl;
+    if(playerBin.length()) kDebug(DBG_AREA) << "videopreview: found playerbin from config: " << playerBin << endl;
+    else
+    {
+        playerBin=KStandardDirs::findExe("mplayer-bin");
+        if(!playerBin.length()) playerBin=KStandardDirs::findExe("mplayer");
+        if(!playerBin.length())
+        {
+            kDebug(DBG_AREA) << "videopreview: mplayer not found, exiting. Run mplayerthumbsconfig to setup mplayer path manually.\n";
+            return false;
+        }
+        kDebug(DBG_AREA) << "videopreview: found playerbin from path: " << playerBin << endl;
+    }
+    return true;
+}
+
+VideoPreview::FileInformation VideoPreview::findFileInfo(QString filePath) {
+    FileInformation fileinfo;
+    fileinfo.seconds=0;
+    fileinfo.fps=0;
+    fileinfo.isValid=false;
+    tmpdir=new KTempDir();
+    if(tmpdir->name().isNull() ) return fileinfo;
+    kDebug(DBG_AREA) << "videopreview: using temp directory " << tmpdir->name() << endl;
+
+    rand=new KRandomSequence(QDateTime::currentDateTime().toTime_t());
+    mplayerprocess=new QProcess();
+    KUrl furl(filePath);
+    kDebug(DBG_AREA) << "videopreview: url=" << furl << "; local:" << furl.isLocalFile() << endl;
+
+
+    QStringList args;
+    args << playerBin << QString("\"" + filePath + "\"") << "-nocache" << "-identify" << "-vo" << "null" << "-frames" << "0"/* << "-nosound" */<< "-ao" << "null";
+    args+= customargs;
+
+    kDebug(DBG_AREA) << "videopreview: starting process: --_" << " " << args.join(" ") << "_--\n";
+    if (! startAndWaitProcess(args) ) return fileinfo;
+
+    QString information=QString(mplayerprocess->readAllStandardOutput() );
+    QRegExp findInfos("ID_VIDEO_FPS=([\\d]*).*ID_LENGTH=([\\d]*).*");
+    if(findInfos.indexIn( information) == -1 )
+    {
+        kDebug(DBG_AREA) << "videopreview: No information found, exiting\n";
+        return fileinfo;
+    }
+    fileinfo.seconds =findInfos.cap(2).toInt();
+    fileinfo.fps=findInfos.cap(1).toInt();
+    
+    kDebug(DBG_AREA) << "videopreview: find length=" << fileinfo.seconds << ", fps=" << fileinfo.fps << endl;
+    fileinfo.isValid=true;
+    return fileinfo;
+}
+
+
+
 #include "videopreview.moc"
 
