@@ -51,8 +51,6 @@ Q_OBJECT
     protected:
         static uint imageVariance(QImage image );
     private:
-        char *m_data;
-        int m_dataSize;
         QPixmap m_pixmap;
 	bool hasBlacklistedExtension(QFileInfo *fileInfo, MPlayerThumbsCfg *cfg);
         FileInformation fileinfo;

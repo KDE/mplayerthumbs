@@ -54,14 +54,11 @@ extern "C"
 }
 
 VideoPreview::VideoPreview()
-    : m_data(0),
-      m_dataSize(0)
 {
 }
 
 VideoPreview::~VideoPreview()
 {
-    delete [] m_data;
 }
 
 bool VideoPreview::create(const QString &path, int width, int height, QImage &img)
