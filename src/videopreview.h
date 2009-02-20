@@ -32,6 +32,7 @@ class QProcess;
 class KTempDir;
 class KRandomSequence;
 #include <qobject.h>
+#define DBG_AREA 0
 
 
 class QFileInfo;
@@ -45,24 +46,15 @@ Q_OBJECT
         virtual bool create(const QString &path, int width, int height, QImage &img);
         virtual Flags flags() const;
 	struct FileInformation { int towidth; int toheight; int fps; int seconds; bool isValid; };
+        enum frameflags { framerandom=0x1, framestart=0x2, frameend=0x4 };
+
     protected:
-        QPixmap getFrame(const QString &path, int flags);
         static uint imageVariance(QImage image );
-        void tryUnlink(KTempDir *dir);
     private:
         char *m_data;
         int m_dataSize;
         QPixmap m_pixmap;
-        QProcess *mplayerprocess;
-        QStringList customargs;
-        KTempDir *tmpdir;
-        KRandomSequence *rand;
-        QString playerBin;
 	bool hasBlacklistedExtension(QFileInfo *fileInfo, MPlayerThumbsCfg *cfg);
-	bool findPlayerBin(MPlayerThumbsCfg *cfg);
-        bool startAndWaitProcess(const QStringList &args);
-	FileInformation findFileInfo(QString filePath);
-        enum frameflags { framerandom=0x1, framestart=0x2, frameend=0x4 };
         FileInformation fileinfo;
 };
 
