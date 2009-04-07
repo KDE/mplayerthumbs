@@ -23,29 +23,30 @@
 #define _videopreview_H_
 
 #include <qstring.h>
-#include <q3cstring.h>
 
+#include <qobject.h>
 #include <qpixmap.h>
 #include <kio/thumbcreator.h>
 
 class QProcess;
 class KTempDir;
 class KRandomSequence;
-#include <qobject.h>
-
+class ServicesFactory;
 class QFileInfo;
 class MPlayerThumbsCfg;
 class VideoPreview : public QObject, public ThumbCreator
 {
 Q_OBJECT
     public:
-        VideoPreview();
+	VideoPreview(ServicesFactory *servicesFactory);
         virtual ~VideoPreview();
         virtual bool create(const QString &path, int width, int height, QImage &img);
         virtual Flags flags() const;
 
     protected:
         static uint imageVariance(QImage image );
+    private:
+	ServicesFactory *servicesFactory;
 };
 
 #endif
