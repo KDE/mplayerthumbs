@@ -20,14 +20,17 @@
 #include <videobackendiface.h>
 
 class KRandomSequence;
+class KTempDir;
+class QProcess;
 class MPlayerVideoBackend : public VideoBackendIFace
 {
 public:
-	MPlayerVideoBackend(const QString &filePath,  MPlayerThumbsCfg* cfg);
+	MPlayerVideoBackend(PreviewingFile *previewingFile,  MPlayerThumbsCfg* cfg);
 	virtual ~MPlayerVideoBackend();
-  virtual VideoPreview::FileInformation findFileInfo();
-  virtual QPixmap getVideoFrame(int flags, VideoPreview::FileInformation fileinfo);
-	virtual bool canPreview();
+  virtual QPixmap getVideoFrame(int flags);
+	virtual bool playerCannotPreview();
+	virtual bool readStreamInformation();
+
 private:
   bool findPlayerBin();
   bool startAndWaitProcess(const QStringList &args);

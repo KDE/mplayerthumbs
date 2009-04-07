@@ -15,7 +15,7 @@
 */
 
 #include "mplayervideobackend.h"
-
+#include "constants.h"
 #include <kdebug.h>
 #include <QDir>
 #include <KMD5>
@@ -24,50 +24,45 @@
 #include "mplayerthumbscfg.h"
 #include <kstandarddirs.h>
 #include <krandomsequence.h>
+#include "previewingfile.h"
 
-MPlayerVideoBackend::MPlayerVideoBackend(const QString& filePath, MPlayerThumbsCfg* cfg) 
-  : VideoBackendIFace(filePath, cfg)
+MPlayerVideoBackend::MPlayerVideoBackend(PreviewingFile *previewingfile, MPlayerThumbsCfg* cfg) 
+  : VideoBackendIFace(previewingfile, cfg)
 {
 }
 
 
-VideoPreview::FileInformation MPlayerVideoBackend::findFileInfo() {
-    VideoPreview::FileInformation fileinfo;
-    fileinfo.seconds=0;
-    fileinfo.fps=0;
-    fileinfo.isValid=false;
-
+bool MPlayerVideoBackend::readStreamInformation() {
     tmpdir=new KTempDir();
-    if(tmpdir->name().isNull() ) return fileinfo;
+    if(tmpdir->name().isNull() ) return false;
     kDebug(DBG_AREA) << "videopreview: using temp directory " << tmpdir->name() << endl;
 
     rand=new KRandomSequence(QDateTime::currentDateTime().toTime_t());
     mplayerprocess=new QProcess();
-    KUrl furl(this->s_filePath);
+    KUrl furl( previewingFile->getFilePath() );
     kDebug(DBG_AREA) << "videopreview: url=" << furl << "; local:" << furl.isLocalFile() << endl;
 
 
     QStringList args;
-    args << playerBin << QString("\"" + this->s_filePath + "\"") << "-nocache" << "-identify" << "-vo" << "null" << "-frames" << "0"/* << "-nosound" */<< "-ao" << "null";
+    args << playerBin << QString("\"" + previewingFile->getFilePath() + "\"") << "-nocache" << "-identify" << "-vo" << "null" << "-frames" << "0"/* << "-nosound" */<< "-ao" << "null";
     args+= customargs;
 
     kDebug(DBG_AREA) << "videopreview: starting process: --_" << " " << args.join(" ") << "_--\n";
-    if (! startAndWaitProcess(args) ) return fileinfo;
+    if (! startAndWaitProcess(args) ) return false;
 
     QString information=QString(mplayerprocess->readAllStandardOutput() );
     QRegExp findInfos("ID_VIDEO_FPS=([\\d]*).*ID_LENGTH=([\\d]*).*");
     if(findInfos.indexIn( information) == -1 )
     {
         kDebug(DBG_AREA) << "videopreview: No information found, exiting\n";
-        return fileinfo;
+        return false;
     }
-    fileinfo.seconds =findInfos.cap(2).toInt();
-    fileinfo.fps=findInfos.cap(1).toInt();
+    previewingFile->setStreamInformation(findInfos.cap(1).toInt(), findInfos.cap(2).toInt());
     
-    kDebug(DBG_AREA) << "videopreview: find length=" << fileinfo.seconds << ", fps=" << fileinfo.fps << endl;
-    fileinfo.isValid=true;
-    return fileinfo;
+    kDebug(DBG_AREA) << "videopreview: find length=" << previewingFile->getSecondsLength() << ", fps=" << previewingFile->getFPS() << endl;
+    return true;
 }
+
 
 MPlayerVideoBackend::~MPlayerVideoBackend() {
     delete mplayerprocess;
@@ -78,40 +73,41 @@ MPlayerVideoBackend::~MPlayerVideoBackend() {
 
 
 
-QPixmap MPlayerVideoBackend::getVideoFrame(int flags, VideoPreview::FileInformation fileinfo) {
+QPixmap MPlayerVideoBackend::getVideoFrame(int flags) {
     QStringList args;
     kDebug(DBG_AREA) << "videopreview: using flags " << flags << endl;
-#define START ((fileinfo.seconds*15)/100)
-#define END ((fileinfo.seconds*70)/100)
+#define START ((previewingFile->getSecondsLength()*15)/100)
+#define END ((previewingFile->getSecondsLength()*70)/100)
     args.clear();
-    args << playerBin << "\"" + this->s_filePath + "\"";
-    if(fileinfo.towidth>fileinfo.toheight) fileinfo.toheight=-2; else fileinfo.towidth=-2;
-//     switch( flags ){
-//         case random
-//     }
-    if( flags & VideoPreview::framerandom )
+    int scalingWidth=previewingFile->getScalingWidth();
+    int scalingHeight=previewingFile->getScalingHeight();
+    int fps=previewingFile->getFPS();
+    args << playerBin << "\"" + previewingFile->getFilePath() + "\"";
+    if(previewingFile->isWide()) scalingHeight=-2; else scalingWidth=-2;
+
+    if( flags & Preview::framerandom )
     {
         kDebug(DBG_AREA) << "videopreview: framerandom\n";
         unsigned long start=(unsigned long)(START+(rand->getDouble() * (END - START) ) );
         args << "-ss" << QString::number( start )
                 << "-frames" << "4";
-    } else if (flags & VideoPreview::frameend )
+    } else if (flags & Preview::frameend )
     {
         kDebug(DBG_AREA) << "videopreview: frameend\n";
-        args << "-ss" << QString::number( fileinfo.seconds - 10 )
+        args << "-ss" << QString::number(  previewingFile->getSecondsLength() - 10 )
                 << "-frames" << "4";
-    } else if (flags & VideoPreview::framestart)
+    } else if (flags & Preview::framestart)
     {
         kDebug(DBG_AREA) << "videopreview: framestart\n";
-        if(!fileinfo.fps) fileinfo.fps=25; // if we've not autodetected a fps rate, let's assume 25fps.. even if it's wrong it shouldn't hurt.
+        if(!fps) fps=25; // if we've not autodetected a fps rate, let's assume 25fps.. even if it's wrong it shouldn't hurt.
         // If we can't skip to a random frame, let's try playing 10 seconds.
-        args << "-frames" << QString::number( fileinfo.fps*10 );
+        args << "-frames" << QString::number( fps*10 );
     }
-    KMD5 md5builder(this->s_filePath.toLatin1() );
+    KMD5 md5builder(previewingFile->getFilePath().toLatin1() );
     QString md5file=md5builder.hexDigest().data();
     QString tmpDirPath = tmpdir->name() + md5file + QDir::separator();
     args << "-nocache" << "-idx" /*@TODO check if it's too slow..*/ << "-ao" << "null"/*"-nosound" << */<< "-speed" << "99"  /*<< "-sstep" << "5"*/
-            << "-vo" << QString("jpeg:outdir=%1").arg(tmpDirPath ) << "-vf" << QString("scale=%1:%2").arg(fileinfo.towidth).arg(fileinfo.toheight);
+            << "-vo" << QString("jpeg:outdir=%1").arg(tmpDirPath ) << "-vf" << QString("scale=%1:%2").arg(scalingWidth).arg(scalingHeight);
     args+=customargs;
 
     if (! startAndWaitProcess(args) ) return NULL;
@@ -168,8 +164,8 @@ bool MPlayerVideoBackend::startAndWaitProcess(const QStringList &args) {
   return true;
 }
 
-bool MPlayerVideoBackend::canPreview() {
-  return findPlayerBin();
+bool MPlayerVideoBackend::playerCannotPreview() {
+  return ! findPlayerBin();
 }
 
 

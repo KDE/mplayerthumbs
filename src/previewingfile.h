@@ -14,26 +14,29 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef VIDEOBACKENDIFACE_H
-#define VIDEOBACKENDIFACE_H
-
+#ifndef PREVIEWINGFILE_H
+#define PREVIEWINGFILE_H
 #include <QObject>
-#include <QPixmap>
-
-class PreviewingFile;
-class MPlayerThumbsCfg;
-class VideoBackendIFace
+#include <QFileInfo>
+class PreviewingFile : public QObject
 {
 public:
-  VideoBackendIFace(PreviewingFile *previewingFile, MPlayerThumbsCfg* cfg);
-  virtual QPixmap getVideoFrame(int flags) = 0;
-  bool cannotPreview();
-  virtual bool readStreamInformation() = 0;
-  virtual ~VideoBackendIFace();
-protected:
-  PreviewingFile *previewingFile;
-  MPlayerThumbsCfg* mplayerThumbsConfig;
-  virtual bool playerCannotPreview() = 0;
+  PreviewingFile(const QString &filePath, uint scalingWidth, uint scalingHeight, QObject *parent = 0);
+  bool isBlacklisted(const QStringList &blacklistedExtensions);
+  void setStreamInformation(uint fps, uint secondsLength);
+  uint getSecondsLength();
+  uint getFPS();
+  QString getFilePath() const;
+  bool isWide();
+  uint getScalingWidth();
+  uint getScalingHeight();
+private:
+  QFileInfo fileInfo;
+  uint fps;
+  uint secondsLength;
+  uint scalingWidth;
+  uint scalingHeight;
+
 };
 
-#endif // VIDEOBACKENDIFACE_H
+#endif // PREVIEWINGFILE_H

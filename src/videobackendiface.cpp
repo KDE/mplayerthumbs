@@ -15,14 +15,19 @@
 */
 
 #include "videobackendiface.h"
+#include "previewingfile.h"
+#include "mplayerthumbs.h"
 
-VideoBackendIFace::VideoBackendIFace(const QString& filePath,  MPlayerThumbsCfg* cfg) :
-  s_filePath(filePath), mplayerThumbsConfig(cfg)
+VideoBackendIFace::VideoBackendIFace(PreviewingFile *previewingFile,  MPlayerThumbsCfg* cfg) :
+  mplayerThumbsConfig(cfg)
 {
-  
+  this->previewingFile = previewingFile;
 }
 
 VideoBackendIFace::~VideoBackendIFace() {
 
 }
 
+bool VideoBackendIFace::cannotPreview() {
+  return previewingFile->isBlacklisted( mplayerThumbsConfig->noextensions() ) || playerCannotPreview();
+}

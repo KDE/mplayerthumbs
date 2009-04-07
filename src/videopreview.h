@@ -32,8 +32,6 @@ class QProcess;
 class KTempDir;
 class KRandomSequence;
 #include <qobject.h>
-#define DBG_AREA 0
-
 
 class QFileInfo;
 class MPlayerThumbsCfg;
@@ -45,15 +43,11 @@ Q_OBJECT
         virtual ~VideoPreview();
         virtual bool create(const QString &path, int width, int height, QImage &img);
         virtual Flags flags() const;
-	struct FileInformation { int towidth; int toheight; int fps; int seconds; bool isValid; };
-        enum frameflags { framerandom=0x1, framestart=0x2, frameend=0x4 };
 
     protected:
         static uint imageVariance(QImage image );
     private:
         QPixmap m_pixmap;
-	bool hasBlacklistedExtension(QFileInfo *fileInfo, MPlayerThumbsCfg *cfg);
-        FileInformation fileinfo;
 };
 
 #endif

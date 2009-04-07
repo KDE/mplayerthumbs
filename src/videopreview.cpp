@@ -19,32 +19,23 @@
  ***************************************************************************/
 
 #include "videopreview.h"
-
-#include <QFile>
+#include "constants.h"
 #include <qpixmap.h>
 #include <qimage.h>
 #include <QtCore/QVarLengthArray>
 
 #include <kmimetype.h>
-#include <QDir>
 #include <qpainter.h>
 #include <qdatetime.h>
-#include <qregexp.h>
 #include "videopreview.h"
 #include <kdebug.h>
-#include <kurl.h>
-#include <math.h>
-#include <QFileInfo>
-#include <kcodecs.h>
 #include <kstandarddirs.h>
 
 #include "videobackendiface.h"
 #include "mplayervideobackend.h"
 #include "mplayerthumbs.h"
+#include "previewingfile.h"
 
-#include <unistd.h>
-
-//#include "config.h"
 extern "C"
 {
     KDE_EXPORT ThumbCreator *new_creator()
@@ -65,31 +56,26 @@ bool VideoPreview::create(const QString &path, int width, int height, QImage &im
 {
     kDebug(DBG_AREA) << "videopreview svn\n";
     MPlayerThumbsCfg *cfg=MPlayerThumbsCfg::self();
-    VideoBackendIFace *videoBackend = new MPlayerVideoBackend(path, cfg);
+    PreviewingFile *previewingFile = new PreviewingFile(path, width, height, this);
+    VideoBackendIFace *videoBackend = new MPlayerVideoBackend(previewingFile, cfg);
 
-    QFileInfo fi(path);
-    if(hasBlacklistedExtension(&fi, cfg) || ! videoBackend->canPreview() ) {
+    if( videoBackend->cannotPreview() || ! videoBackend->readStreamInformation() ) {
       delete cfg;
       delete videoBackend;
       return false;
     }
 
-    FileInformation fileinfo=videoBackend->findFileInfo();
-
-    if(! fileinfo.isValid) return false;
-    fileinfo.towidth=width;
-    fileinfo.toheight=height;
     QPixmap pix;
-    int flags=framerandom;
+    int flags=Preview::framerandom;
     #define LASTTRY 3
     for(int i=0; i<=LASTTRY; i++)
     {
         kDebug(DBG_AREA) << "videopreview: try " << i << endl;
-	flags=((i<LASTTRY) ? flags : framestart );
-        pix=videoBackend->getVideoFrame(flags, fileinfo);
+	flags=((i<LASTTRY) ? flags : Preview::framestart );
+        pix=videoBackend->getVideoFrame(flags);
         if(!pix.isNull()) {
             uint variance=imageVariance(pix.toImage()/*.bits(),( (width+ 7) & ~0x7), width, height, 1 */);
-            kDebug(DBG_AREA) << "videopreview: " << QFileInfo(path).fileName() << " frame variance: " << variance << "; " << 
+            kDebug(DBG_AREA) << "videopreview: " << previewingFile->getFilePath() << " frame variance: " << variance << "; " << 
                     ((variance<=40 && ( i!=LASTTRY-1))? "!!!DROPPING!!!" : "GOOD :-)" ) << endl;
             if(variance>40 || i==LASTTRY-1 ) break;
         }
@@ -158,16 +144,6 @@ uint VideoPreview::imageVariance(QImage image )
     return delta/STEPS;
 }
 
-bool VideoPreview::hasBlacklistedExtension(QFileInfo* fileInfo, MPlayerThumbsCfg *cfg) {
-    QString extension=fileInfo->suffix().trimmed();
-    kDebug(DBG_AREA) << "videopreview: file extension=\"" << extension << "\"\n";
-    if( extension.length() && !cfg->noextensions().filter(extension, Qt::CaseInsensitive).isEmpty() )
-    {
-        kDebug(DBG_AREA) << "videopreview: matched extension " << extension.prepend('.') << "; exiting.\n";
-        return true;
-    }
-    return false;
-}
 
 
 #include "videopreview.moc"

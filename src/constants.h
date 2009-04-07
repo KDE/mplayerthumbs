@@ -14,26 +14,12 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef VIDEOBACKENDIFACE_H
-#define VIDEOBACKENDIFACE_H
+#ifndef H_CONSTANTS
+#define H_CONSTANTS
+#define DBG_AREA 0
 
-#include <QObject>
-#include <QPixmap>
+namespace Preview {
+        enum frameflags { framerandom=0x1, framestart=0x2, frameend=0x4 };
 
-class PreviewingFile;
-class MPlayerThumbsCfg;
-class VideoBackendIFace
-{
-public:
-  VideoBackendIFace(PreviewingFile *previewingFile, MPlayerThumbsCfg* cfg);
-  virtual QPixmap getVideoFrame(int flags) = 0;
-  bool cannotPreview();
-  virtual bool readStreamInformation() = 0;
-  virtual ~VideoBackendIFace();
-protected:
-  PreviewingFile *previewingFile;
-  MPlayerThumbsCfg* mplayerThumbsConfig;
-  virtual bool playerCannotPreview() = 0;
-};
-
-#endif // VIDEOBACKENDIFACE_H
+}
+#endif
