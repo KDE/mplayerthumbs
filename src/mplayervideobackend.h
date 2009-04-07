@@ -1,4 +1,7 @@
 /*
+   Copyright (C) 2006-2009
+   by Marco Gulino <marco.gulino@gmail.com>
+	 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
    License version 2 as published by the Free Software Foundation.
@@ -27,7 +30,7 @@ class MPlayerVideoBackend : public VideoBackendIFace
 public:
 	MPlayerVideoBackend(PreviewingFile *previewingFile,  MPlayerThumbsCfg* cfg);
 	virtual ~MPlayerVideoBackend();
-  virtual QPixmap getVideoFrame(int flags);
+  virtual Thumbnail* preview(int flags);
 	virtual bool playerCannotPreview();
 	virtual bool readStreamInformation();
 

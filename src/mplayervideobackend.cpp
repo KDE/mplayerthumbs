@@ -1,4 +1,7 @@
 /*
+   Copyright (C) 2006-2009
+   by Marco Gulino <marco.gulino@gmail.com>
+
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
    License version 2 as published by the Free Software Foundation.
@@ -25,6 +28,7 @@
 #include <kstandarddirs.h>
 #include <krandomsequence.h>
 #include "previewingfile.h"
+#include "thumbnail.h"
 
 MPlayerVideoBackend::MPlayerVideoBackend(PreviewingFile *previewingfile, MPlayerThumbsCfg* cfg) 
   : VideoBackendIFace(previewingfile, cfg)
@@ -73,7 +77,7 @@ MPlayerVideoBackend::~MPlayerVideoBackend() {
 
 
 
-QPixmap MPlayerVideoBackend::getVideoFrame(int flags) {
+Thumbnail *MPlayerVideoBackend::preview(int flags) {
     QStringList args;
     kDebug(DBG_AREA) << "videopreview: using flags " << flags << endl;
 #define START ((previewingFile->getSecondsLength()*15)/100)
@@ -118,8 +122,8 @@ QPixmap MPlayerVideoBackend::getVideoFrame(int flags) {
 
     QString lastframe=QDir(tmpDirPath ).entryList( QStringList("*.jpg") ).last();
     kDebug(DBG_AREA) << "videopreview: LastFrame==" << lastframe << endl;
-    QPixmap retpix(tmpDirPath.append( lastframe ));
-    return retpix;
+    QPixmap *retpix = new QPixmap(tmpDirPath.append( lastframe ));
+    return new Thumbnail(retpix, previewingFile);
 }
 
 

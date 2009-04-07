@@ -1,4 +1,7 @@
 /*
+   Copyright (C) 2006-2009
+   by Marco Gulino <marco.gulino@gmail.com>
+
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
    License version 2 as published by the Free Software Foundation.
@@ -18,8 +21,11 @@
 #define PREVIEWINGFILE_H
 #include <QObject>
 #include <QFileInfo>
+class Thumbnail;
+class VideoBackendIFace;
 class PreviewingFile : public QObject
 {
+Q_OBJECT
 public:
   PreviewingFile(const QString &filePath, uint scalingWidth, uint scalingHeight, QObject *parent = 0);
   bool isBlacklisted(const QStringList &blacklistedExtensions);
@@ -30,13 +36,14 @@ public:
   bool isWide();
   uint getScalingWidth();
   uint getScalingHeight();
+  Thumbnail *getPreview(VideoBackendIFace *videoBackend, uint minVariance, uint maxTries);
+
 private:
   QFileInfo fileInfo;
   uint fps;
   uint secondsLength;
   uint scalingWidth;
   uint scalingHeight;
-
 };
 
 #endif // PREVIEWINGFILE_H

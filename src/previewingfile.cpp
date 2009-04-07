@@ -1,4 +1,7 @@
 /*
+   Copyright (C) 2006-2009
+   by Marco Gulino <marco.gulino@gmail.com>
+
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
    License version 2 as published by the Free Software Foundation.
@@ -18,6 +21,9 @@
 #include "constants.h"
 #include <kdebug.h>
 #include <QStringList>
+#include "thumbnail.h"
+#include "thumbnailsmap.h"
+#include "videobackendiface.h"
 PreviewingFile::PreviewingFile(const QString& filePath, uint scalingWidth, uint scalingHeight, QObject* parent)
   : QObject(parent), fileInfo(filePath)
 {
@@ -42,6 +48,17 @@ void PreviewingFile::setStreamInformation(unsigned int fps, unsigned int seconds
   this->secondsLength=secondsLength;
 }
 
+Thumbnail* PreviewingFile::getPreview(VideoBackendIFace* videoBackend, uint minVariance, unsigned int maxTries) {
+  ThumbnailsMap thumbnailsMap;
+  Preview::frameflags flags;
+  while(thumbnailsMap.hasAGoodImageOrSurrenders(minVariance, maxTries)) {
+    flags=(thumbnailsMap.size()>=maxTries) ? Preview::framestart : Preview::framerandom;
+    thumbnailsMap.addThumbnail(videoBackend->preview(flags) );
+  }
+  return thumbnailsMap.getBestThumbnail();
+}
+
+
 unsigned int PreviewingFile::getFPS() {
   return this->fps;
 }
@@ -65,6 +82,8 @@ unsigned int PreviewingFile::getScalingHeight() {
 unsigned int PreviewingFile::getScalingWidth() {
   return this->scalingWidth;
 }
+
+#include "previewingfile.moc"
 
 
 

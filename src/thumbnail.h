@@ -17,12 +17,24 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef H_CONSTANTS
-#define H_CONSTANTS
-#define DBG_AREA 0
+#ifndef THUMBNAIL_H
+#define THUMBNAIL_H
+#include <QObject>
+class QPixmap;
+class Thumbnail : public QObject
+{
+Q_OBJECT
+public:
+  Thumbnail(QPixmap *pixmap, QObject *parent=0);
+  ~Thumbnail();
+  uint getVariance();
+  QPixmap *getPixmap();
+  bool pixmapIsValid();
 
-namespace Preview {
-        enum frameflags { framerandom=0x1, framestart=0x2, frameend=0x4 };
+private:
+  void calculateVariance();
+  uint variance;
+  QPixmap *pixmap;
+};
 
-}
-#endif
+#endif // THUMBNAIL_H

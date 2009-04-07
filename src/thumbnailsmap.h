@@ -17,12 +17,22 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef H_CONSTANTS
-#define H_CONSTANTS
-#define DBG_AREA 0
+#ifndef THUMBNAILSMAP_H
+#define THUMBNAILSMAP_H
+#include <QHash>
+class Thumbnail;
+class ThumbnailsMap
+{
+public:
+  bool hasAGoodImageOrSurrenders(uint minVariance, uint maxImages);
+  void addThumbnail(Thumbnail *thumbnail);
+  Thumbnail* getBestThumbnail();
+  uint size();
+private:
+  uint bestVariance();
+  bool hasAGoodImage(uint minVariance);
+  QHash<uint, Thumbnail*> thumbnails;
 
-namespace Preview {
-        enum frameflags { framerandom=0x1, framestart=0x2, frameend=0x4 };
+};
 
-}
-#endif
+#endif // THUMBNAILSMAP_H
