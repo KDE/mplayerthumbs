@@ -46,8 +46,6 @@ Q_OBJECT
 
     protected:
         static uint imageVariance(QImage image );
-    private:
-        QPixmap m_pixmap;
 };
 
 #endif
