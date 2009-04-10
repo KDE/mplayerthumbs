@@ -134,7 +134,7 @@ void MPlayerVideoBackend::tryUnlink(KTempDir *dir) {
 
 bool MPlayerVideoBackend::findPlayerBin() {
     playerBin=mplayerThumbsConfig->mplayerbin();
-    customargs=mplayerThumbsConfig->customargs().split(" ");
+    customargs=mplayerThumbsConfig->customargs().split(' ');
     kDebug(DBG_AREA) << "videopreview: customargs=" << mplayerThumbsConfig->customargs() << " ;;;; " << customargs << endl;
     if(playerBin.length()) kDebug(DBG_AREA) << "videopreview: found playerbin from config: " << playerBin << endl;
     else

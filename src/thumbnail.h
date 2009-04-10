@@ -25,7 +25,7 @@ class Thumbnail : public QObject
 {
 Q_OBJECT
 public:
-  Thumbnail(QPixmap *pixmap, QObject *parent=0);
+  explicit Thumbnail(QPixmap *pixmap, QObject *parent=0);
   ~Thumbnail();
   uint getVariance();
   QPixmap *getPixmap();

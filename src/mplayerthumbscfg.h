@@ -18,8 +18,8 @@
     Boston, MA 02110-1301, USA.
  ***************************************************************************/
 
-#ifndef _MPLAYERTHUMBSCONFIG_
-#define _MPLAYERTHUMBSCONFIG_
+#ifndef MPLAYERTHUMBSCONFIG_H
+#define MPLAYERTHUMBSCONFIG_H
 #include <kconfigdialog.h>
 #include "mplayerthumbs.h"
 #include "ui_configDialog.h"

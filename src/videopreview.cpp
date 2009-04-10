@@ -27,7 +27,6 @@
 #include <kmimetype.h>
 #include <qpainter.h>
 #include <qdatetime.h>
-#include "videopreview.h"
 #include <kdebug.h>
 #include <kstandarddirs.h>
 

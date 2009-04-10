@@ -76,3 +76,4 @@ void Thumbnail::calculateVariance() {
 
 
 #include "thumbnail.moc"
+
