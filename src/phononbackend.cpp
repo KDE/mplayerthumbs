@@ -18,7 +18,9 @@
 */
 
 #include "phononbackend.h"
+#include <Qt/QtCore>
 
+using namespace Phonon;
 Thumbnail* PhononBackend::preview(int)
 {
   return NULL;
@@ -31,6 +33,10 @@ bool PhononBackend::readStreamInformation()
 
 bool PhononBackend::playerCannotPreview()
 {
+#ifdef QT_NO_PHONON_VIDEO
   return true;
+#else
+  return false;
+#endif
 }
 
