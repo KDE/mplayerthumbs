@@ -18,7 +18,7 @@
 */
 
 #include "phononbackend.h"
-#include <Qt/QtCore>
+#include <QtCore/QtGlobal>
 #include <phonon/phononnamespace.h>
 using namespace Phonon;
 Thumbnail* PhononBackend::preview(int)

@@ -19,7 +19,7 @@
 
 #ifndef FRAMESELECTOR_H
 #define FRAMESELECTOR_H
-#include <Qt/QtCore>
+#include <QtCore/QtGlobal>
 class PreviewingFile;
 class FrameSelector
 {
