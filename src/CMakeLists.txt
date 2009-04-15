@@ -3,7 +3,7 @@
 
 ########### next target ###############
 
-set(videopreview_PART_SRCS videopreview.cpp  mplayervideobackend.cpp videobackendiface.cpp previewingfile.cpp thumbnail.cpp thumbnailsmap.cpp servicesfactory.cpp)
+set(videopreview_PART_SRCS phononbackend.cpp videopreview.cpp  mplayervideobackend.cpp videobackendiface.cpp previewingfile.cpp thumbnail.cpp thumbnailsmap.cpp servicesfactory.cpp)
 
 kde4_add_kcfg_files(videopreview_PART_SRCS mplayerthumbs.kcfgc)
 

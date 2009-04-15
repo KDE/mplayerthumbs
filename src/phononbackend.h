@@ -17,28 +17,17 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef VIDEOBACKENDIFACE_H
-#define VIDEOBACKENDIFACE_H
-
-#include <QObject>
-#include <QPixmap>
-
-class PreviewingFile;
-class MPlayerThumbsCfg;
-class Thumbnail;
-class VideoBackendIFace
+#ifndef PHONONBACKEND_H
+#define PHONONBACKEND_H
+#include "videobackendiface.h"
+class PhononBackend : public VideoBackendIFace
 {
 public:
-  VideoBackendIFace(PreviewingFile *previewingFile, MPlayerThumbsCfg* cfg);
-  bool cannotPreview();
+  virtual Thumbnail* preview (int);
+  virtual bool readStreamInformation ();
 
-  virtual Thumbnail *preview(int flags) = 0;
-  virtual bool readStreamInformation() = 0;
-  virtual ~VideoBackendIFace();
 protected:
-  PreviewingFile *previewingFile;
-  MPlayerThumbsCfg* mplayerThumbsConfig;
-  virtual bool playerCannotPreview() = 0;
+  virtual bool playerCannotPreview ();
 };
 
-#endif // VIDEOBACKENDIFACE_H
+#endif // PHONONBACKEND_H
