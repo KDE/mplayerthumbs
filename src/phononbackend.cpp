@@ -21,7 +21,7 @@
 #include <QtCore/QtGlobal>
 #include <phonon/phononnamespace.h>
 using namespace Phonon;
-Thumbnail* PhononBackend::preview(int)
+Thumbnail* PhononBackend::preview(FrameSelector *frameSelector)
 {
   return NULL;
 }

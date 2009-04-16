@@ -23,7 +23,7 @@
 class PhononBackend : public VideoBackendIFace
 {
 public:
-  virtual Thumbnail* preview (int);
+  virtual Thumbnail* preview (FrameSelector *frameSelector);
   virtual bool readStreamInformation ();
 
 protected:

@@ -70,16 +70,13 @@ Thumbnail* PreviewingFile::getPreview(VideoBackendIFace* videoBackend, uint minV
   ThumbnailsMap thumbnailsMap;
   RandomFrameSelector randomFrameSelector(25, 75);
   PlainFrameSelector plainFrameSelector(10000);
-  FrameSelector *frameSelector;
+  FrameSelector *frameSelector = &randomFrameSelector;
   
   while(! thumbnailsMap.hasAGoodImageOrSurrenders(minVariance, maxTries)) {
-    if(thumbnailsMap.size()>maxTries)
-      frameSelector=&plainFrameSelector;
-    else
-      frameSelector=&randomFrameSelector;
     Thumbnail *currentFrame=videoBackend->preview(frameSelector);
     thumbnailsMap.addThumbnail( currentFrame );
     kDebug() << "try " << thumbnailsMap.size() << ", image variance: " << currentFrame->getVariance() << endl;;
+    if(thumbnailsMap.size()>=maxTries-1) frameSelector=&plainFrameSelector;
   }
   return thumbnailsMap.getBestThumbnail();
 }
