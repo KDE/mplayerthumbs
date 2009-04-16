@@ -19,10 +19,18 @@
 
 #ifndef MPLAYERVIDEOBACKEND_H
 #define MPLAYERVIDEOBACKEND_H
-
+#include <QtCore/QMap>
 #include <videobackendiface.h>
 class KTempDir;
 class QProcess;
+class ArgsCalculator {
+	public:
+		ArgsCalculator(PreviewingFile* previewingFile);
+		virtual QStringList args(FrameSelector *frameSelector) = 0;
+		virtual ~ArgsCalculator() {};
+	protected:
+		PreviewingFile *previewingFile;
+};
 class MPlayerVideoBackend : public VideoBackendIFace
 {
 public:
@@ -41,6 +49,7 @@ private:
   QProcess *mplayerprocess;
   QStringList customargs;
 	KTempDir *tmpdir;
+	QMap<FrameSelector::SeekStrategy, ArgsCalculator*> seekArguments;
 };
 
 #endif // MPLAYERVIDEOBACKEND_H

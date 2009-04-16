@@ -29,9 +29,39 @@
 #include "previewingfile.h"
 #include "thumbnail.h"
 
+ArgsCalculator::ArgsCalculator(PreviewingFile* previewingFile)
+{
+  this->previewingFile=previewingFile;
+}
+
+class RandomArgsCalculator : public ArgsCalculator {
+  public:
+    RandomArgsCalculator(PreviewingFile *previewingFile) : ArgsCalculator(previewingFile) {}
+    virtual QStringList args(FrameSelector *frameSelector) {
+      kDebug(DBG_AREA) << "videopreview: framerandom\n";
+      return QStringList() << "-ss" << QString::number( frameSelector->framePositionInMilliseconds(previewingFile) / 1000 ) << "-frames" << "4";
+    }
+};
+
+
+class FromStartArgsCalculator : public ArgsCalculator {
+  public:
+    FromStartArgsCalculator(PreviewingFile *previewingFile) : ArgsCalculator(previewingFile) {}
+    virtual QStringList args(FrameSelector *frameSelector) {
+        kDebug(DBG_AREA) << "videopreview: framestart\n";
+	int fps=previewingFile->getFPS();
+        if(!fps) fps=25; // if we've not autodetected a fps rate, let's assume 25fps.. even if it's wrong it shouldn't hurt.
+        // If we can't skip to a random frame, let's try playing N seconds.
+        return QStringList() << "-frames" << QString::number( fps * frameSelector->framePositionInMilliseconds(previewingFile) / 1000 );
+    }
+};
+
+
 MPlayerVideoBackend::MPlayerVideoBackend(PreviewingFile *previewingfile, MPlayerThumbsCfg* cfg) 
   : VideoBackendIFace(previewingfile, cfg)
 {
+  seekArguments.insert(FrameSelector::FromStart, new FromStartArgsCalculator(previewingfile) );
+  seekArguments.insert(FrameSelector::Random, new RandomArgsCalculator(previewingfile));
 }
 
 
@@ -67,9 +97,10 @@ bool MPlayerVideoBackend::readStreamInformation() {
 
 
 MPlayerVideoBackend::~MPlayerVideoBackend() {
-    delete mplayerprocess;
-    tryUnlink(tmpdir);
-    delete tmpdir;
+  foreach(ArgsCalculator *argsCalculator, seekArguments.values()) delete argsCalculator;
+  delete mplayerprocess;
+  tryUnlink(tmpdir);
+  delete tmpdir;
 }
 
 
@@ -80,21 +111,11 @@ Thumbnail *MPlayerVideoBackend::preview(FrameSelector *frameSelector) {
     args.clear();
     int scalingWidth=previewingFile->getScalingWidth();
     int scalingHeight=previewingFile->getScalingHeight();
-    int fps=previewingFile->getFPS();
     args << playerBin << "\"" + previewingFile->getFilePath() + "\"";
     if(previewingFile->isWide()) scalingHeight=-2; else scalingWidth=-2;
 
-    if( frameSelector->seekStrategy() & FrameSelector::Random )
-    {
-        kDebug(DBG_AREA) << "videopreview: framerandom\n";
-        args << "-ss" << QString::number( frameSelector->framePositionInMilliseconds(previewingFile) / 1000 ) << "-frames" << "4";
-    } else if (frameSelector->seekStrategy() & FrameSelector::FromStart)
-    {
-        kDebug(DBG_AREA) << "videopreview: framestart\n";
-        if(!fps) fps=25; // if we've not autodetected a fps rate, let's assume 25fps.. even if it's wrong it shouldn't hurt.
-        // If we can't skip to a random frame, let's try playing 10 seconds.
-        args << "-frames" << QString::number( fps* frameSelector->framePositionInMilliseconds(previewingFile) / 1000 );
-    }
+    args << seekArguments[frameSelector->seekStrategy()]->args(frameSelector);
+
     KMD5 md5builder(previewingFile->getFilePath().toLatin1() );
     QString md5file=md5builder.hexDigest().data();
     QString tmpDirPath = tmpdir->name() + md5file + QDir::separator();
