@@ -21,8 +21,6 @@
 #define MPLAYERVIDEOBACKEND_H
 
 #include <videobackendiface.h>
-
-class KRandomSequence;
 class KTempDir;
 class QProcess;
 class MPlayerVideoBackend : public VideoBackendIFace
@@ -30,7 +28,7 @@ class MPlayerVideoBackend : public VideoBackendIFace
 public:
 	MPlayerVideoBackend(PreviewingFile *previewingFile,  MPlayerThumbsCfg* cfg);
 	virtual ~MPlayerVideoBackend();
-  virtual Thumbnail* preview(int flags);
+  virtual Thumbnail* preview(FrameSelector *frameSelector);
 	virtual bool playerCannotPreview();
 	virtual bool readStreamInformation();
 
@@ -43,8 +41,6 @@ private:
   QProcess *mplayerprocess;
   QStringList customargs;
 	KTempDir *tmpdir;
-	KRandomSequence *rand;
-
 };
 
 #endif // MPLAYERVIDEOBACKEND_H

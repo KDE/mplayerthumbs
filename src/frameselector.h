@@ -24,7 +24,11 @@ class PreviewingFile;
 class FrameSelector
 {
 public:
-  virtual qint64 framePositionInMilliseconds(PreviewingFile *previewingFile) = 0;
+  enum SeekStrategy { FromStart, Random  };
+
+  virtual quint64 framePositionInMilliseconds(PreviewingFile *previewingFile) = 0;
+  virtual SeekStrategy seekStrategy() = 0;
+  virtual ~FrameSelector();
 };
 
 class RandomFrameSelectorPrivate;
@@ -32,8 +36,9 @@ class RandomFrameSelector : public FrameSelector
 {
   public:
     RandomFrameSelector(uint beginPercentPosition, uint endPercentPosition);
-    virtual qint64 framePositionInMilliseconds(PreviewingFile *previewingFile);
-    ~RandomFrameSelector();
+    virtual quint64 framePositionInMilliseconds(PreviewingFile *previewingFile);
+    virtual ~RandomFrameSelector();
+    virtual SeekStrategy seekStrategy();
     private:
       RandomFrameSelectorPrivate *d;
 };
@@ -42,9 +47,11 @@ class PlainFrameSelectorPrivate;
 class PlainFrameSelector : public FrameSelector
 {
   public:
-    PlainFrameSelector(qint64 millisecondsToSkip);
-    virtual qint64 framePositionInMilliseconds(PreviewingFile *previewingFile);
-    ~PlainFrameSelector();
+    PlainFrameSelector(quint64 millisecondsToSkip);
+    virtual quint64 framePositionInMilliseconds(PreviewingFile *previewingFile);
+    virtual ~PlainFrameSelector();
+    virtual SeekStrategy seekStrategy();
+
   private:
     PlainFrameSelectorPrivate *d;
 };

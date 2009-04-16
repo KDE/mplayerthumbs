@@ -22,6 +22,7 @@
 
 #include <QObject>
 #include <QPixmap>
+#include "frameselector.h"
 
 class PreviewingFile;
 class MPlayerThumbsCfg;
@@ -32,7 +33,7 @@ public:
   VideoBackendIFace(PreviewingFile *previewingFile, MPlayerThumbsCfg* cfg);
   bool cannotPreview();
 
-  virtual Thumbnail *preview(int flags) = 0;
+  virtual Thumbnail *preview(FrameSelector *frameSelector) = 0;
   virtual bool readStreamInformation() = 0;
   virtual ~VideoBackendIFace();
 protected:

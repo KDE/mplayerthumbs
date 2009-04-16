@@ -26,7 +26,6 @@
 #include <QProcess>
 #include "mplayerthumbscfg.h"
 #include <kstandarddirs.h>
-#include <krandomsequence.h>
 #include "previewingfile.h"
 #include "thumbnail.h"
 
@@ -41,7 +40,6 @@ bool MPlayerVideoBackend::readStreamInformation() {
     if(tmpdir->name().isNull() ) return false;
     kDebug(DBG_AREA) << "videopreview: using temp directory " << tmpdir->name() << endl;
 
-    rand=new KRandomSequence(QDateTime::currentDateTime().toTime_t());
     mplayerprocess=new QProcess();
     KUrl furl( previewingFile->getFilePath() );
     kDebug(DBG_AREA) << "videopreview: url=" << furl << "; local:" << furl.isLocalFile() << endl;
@@ -61,27 +59,24 @@ bool MPlayerVideoBackend::readStreamInformation() {
         kDebug(DBG_AREA) << "videopreview: No information found, exiting\n";
         return false;
     }
-    previewingFile->setStreamInformation(findInfos.cap(1).toInt(), findInfos.cap(2).toInt());
+    previewingFile->setStreamInformation(findInfos.cap(1).toInt(), findInfos.cap(2).toInt() * 1000);
     
-    kDebug(DBG_AREA) << "videopreview: find length=" << previewingFile->getSecondsLength() << ", fps=" << previewingFile->getFPS() << endl;
+    kDebug(DBG_AREA) << "videopreview: find length=" << previewingFile->getMillisecondsLength() << " ms, fps=" << previewingFile->getFPS() << endl;
     return true;
 }
 
 
 MPlayerVideoBackend::~MPlayerVideoBackend() {
     delete mplayerprocess;
-    delete rand;
     tryUnlink(tmpdir);
     delete tmpdir;
 }
 
 
 
-Thumbnail *MPlayerVideoBackend::preview(int flags) {
+Thumbnail *MPlayerVideoBackend::preview(FrameSelector *frameSelector) {
     QStringList args;
-    kDebug(DBG_AREA) << "videopreview: using flags " << flags << endl;
-#define START ((previewingFile->getSecondsLength()*15)/100)
-#define END ((previewingFile->getSecondsLength()*70)/100)
+    kDebug(DBG_AREA) << "videopreview: using seek strategy " << frameSelector->seekStrategy() << endl;
     args.clear();
     int scalingWidth=previewingFile->getScalingWidth();
     int scalingHeight=previewingFile->getScalingHeight();
@@ -89,23 +84,16 @@ Thumbnail *MPlayerVideoBackend::preview(int flags) {
     args << playerBin << "\"" + previewingFile->getFilePath() + "\"";
     if(previewingFile->isWide()) scalingHeight=-2; else scalingWidth=-2;
 
-    if( flags & Preview::framerandom )
+    if( frameSelector->seekStrategy() & FrameSelector::Random )
     {
         kDebug(DBG_AREA) << "videopreview: framerandom\n";
-        unsigned long start=(unsigned long)(START+(rand->getDouble() * (END - START) ) );
-        args << "-ss" << QString::number( start )
-                << "-frames" << "4";
-    } else if (flags & Preview::frameend )
-    {
-        kDebug(DBG_AREA) << "videopreview: frameend\n";
-        args << "-ss" << QString::number(  previewingFile->getSecondsLength() - 10 )
-                << "-frames" << "4";
-    } else if (flags & Preview::framestart)
+        args << "-ss" << QString::number( frameSelector->framePositionInMilliseconds(previewingFile) / 1000 ) << "-frames" << "4";
+    } else if (frameSelector->seekStrategy() & FrameSelector::FromStart)
     {
         kDebug(DBG_AREA) << "videopreview: framestart\n";
         if(!fps) fps=25; // if we've not autodetected a fps rate, let's assume 25fps.. even if it's wrong it shouldn't hurt.
         // If we can't skip to a random frame, let's try playing 10 seconds.
-        args << "-frames" << QString::number( fps*10 );
+        args << "-frames" << QString::number( fps* frameSelector->framePositionInMilliseconds(previewingFile) / 1000 );
     }
     KMD5 md5builder(previewingFile->getFilePath().toLatin1() );
     QString md5file=md5builder.hexDigest().data();

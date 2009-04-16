@@ -23,14 +23,16 @@
 #include <QFileInfo>
 class Thumbnail;
 class VideoBackendIFace;
+class PreviewingFilePrivate;
 class PreviewingFile : public QObject
 {
 Q_OBJECT
 public:
   PreviewingFile(const QString &filePath, uint scalingWidth, uint scalingHeight, QObject *parent = 0);
+  ~PreviewingFile();
   bool isBlacklisted(const QStringList &blacklistedExtensions);
-  void setStreamInformation(uint fps, uint secondsLength);
-  uint getSecondsLength();
+  void setStreamInformation(uint fps, quint64 millisecondsLength);
+  quint64 getMillisecondsLength();
   uint getFPS();
   QString getFilePath() const;
   bool isWide();
@@ -39,11 +41,7 @@ public:
   Thumbnail *getPreview(VideoBackendIFace *videoBackend, uint minVariance, uint maxTries);
 
 private:
-  QFileInfo fileInfo;
-  uint fps;
-  uint secondsLength;
-  uint scalingWidth;
-  uint scalingHeight;
+  PreviewingFilePrivate *d;
 };
 
 #endif // PREVIEWINGFILE_H

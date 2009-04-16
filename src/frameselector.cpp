@@ -19,25 +19,42 @@
 
 #include "frameselector.h"
 #include "previewingfile.h"
+#include <krandomsequence.h>
+#include <QtCore/QDateTime>
+FrameSelector::~FrameSelector() {
+
+}
+
 
 class RandomFrameSelectorPrivate {
   public:
     uint beginPercentPosition;
     uint endPercentPosition;
+    KRandomSequence *rand;
+
 };
 
 RandomFrameSelector::RandomFrameSelector(unsigned int beginPercentPosition, unsigned int endPercentPosition) {
   d=new RandomFrameSelectorPrivate();
   d->beginPercentPosition=beginPercentPosition;
   d->endPercentPosition=endPercentPosition;
+  d->rand=new KRandomSequence(QDateTime::currentDateTime().toTime_t());
+
 }
 
 RandomFrameSelector::~RandomFrameSelector() {
+  delete d->rand;
   delete d;
 }
 
-qint64 RandomFrameSelector::framePositionInMilliseconds(PreviewingFile* previewingFile) {
+FrameSelector::SeekStrategy RandomFrameSelector::seekStrategy() {
+  return FrameSelector::Random;
+}
 
+quint64 RandomFrameSelector::framePositionInMilliseconds(PreviewingFile* previewingFile) {
+  quint64 start = (previewingFile->getMillisecondsLength()* d->beginPercentPosition)/100;
+  quint64 end = (previewingFile->getMillisecondsLength()*d->endPercentPosition)/100;
+  return (qint64)(start+(d->rand->getDouble() * (end - start) ) );
 }
 
 
@@ -45,10 +62,10 @@ qint64 RandomFrameSelector::framePositionInMilliseconds(PreviewingFile* previewi
 
 class PlainFrameSelectorPrivate {
   public:
-    qint64 millisecondsToSkip;
+    quint64 millisecondsToSkip;
 };
 
-PlainFrameSelector::PlainFrameSelector(qint64 millisecondsToSkip) {
+PlainFrameSelector::PlainFrameSelector(quint64 millisecondsToSkip) {
   d=new PlainFrameSelectorPrivate();
   d->millisecondsToSkip=millisecondsToSkip;
 }
@@ -57,8 +74,12 @@ PlainFrameSelector::~PlainFrameSelector() {
   delete d;
 }
 
+FrameSelector::SeekStrategy PlainFrameSelector::seekStrategy() {
+  return FrameSelector::FromStart;
+}
 
-qint64 PlainFrameSelector::framePositionInMilliseconds(PreviewingFile* previewingFile) {
-  qint64 fileLength=previewingFile->getSecondsLength()*1000;
+
+quint64 PlainFrameSelector::framePositionInMilliseconds(PreviewingFile* previewingFile) {
+  quint64 fileLength=previewingFile->getMillisecondsLength();
   return (d->millisecondsToSkip>fileLength)?(fileLength):(d->millisecondsToSkip);
 }

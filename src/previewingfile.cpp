@@ -24,16 +24,33 @@
 #include "thumbnail.h"
 #include "thumbnailsmap.h"
 #include "videobackendiface.h"
+#include "frameselector.h"
+
+class PreviewingFilePrivate {
+  public:
+    QFileInfo fileInfo;
+    uint fps;
+    uint millisecondsLength;
+    uint scalingWidth;
+    uint scalingHeight;
+};
 PreviewingFile::PreviewingFile(const QString& filePath, uint scalingWidth, uint scalingHeight, QObject* parent)
-  : QObject(parent), fileInfo(filePath)
+  : QObject(parent)
 {
-  this->scalingHeight=scalingHeight;
-  this->scalingWidth=scalingWidth;
+  d=new PreviewingFilePrivate();
+  d->fileInfo=filePath;
+  d->scalingHeight=scalingHeight;
+  d->scalingWidth=scalingWidth;
+}
+
+PreviewingFile::~PreviewingFile() {
+  delete d;
 }
 
 
+
 bool PreviewingFile::isBlacklisted(const QStringList& blacklistedExtensions) {
-    QString extension=fileInfo.suffix().trimmed();
+    QString extension=d->fileInfo.suffix().trimmed();
     kDebug(DBG_AREA) << "videopreview: file extension=\"" << extension << "\"\n";
     if( extension.length() && !blacklistedExtensions.filter(extension, Qt::CaseInsensitive).isEmpty() )
     {
@@ -43,18 +60,24 @@ bool PreviewingFile::isBlacklisted(const QStringList& blacklistedExtensions) {
     return false;
 }
 
-void PreviewingFile::setStreamInformation(unsigned int fps, unsigned int secondsLength) {
-  this->fps=fps;
-  this->secondsLength=secondsLength;
+void PreviewingFile::setStreamInformation(unsigned int fps, quint64 millisecondsLength) {
+  d->fps=fps;
+  d->millisecondsLength=millisecondsLength;
 }
 
 Thumbnail* PreviewingFile::getPreview(VideoBackendIFace* videoBackend, uint minVariance, unsigned int maxTries) {
   kDebug() << "getPreview with minVariance: " << minVariance << endl;
   ThumbnailsMap thumbnailsMap;
-  Preview::frameflags flags;
+  RandomFrameSelector randomFrameSelector(25, 75);
+  PlainFrameSelector plainFrameSelector(10000);
+  FrameSelector *frameSelector;
+  
   while(thumbnailsMap.hasAGoodImageOrSurrenders(minVariance, maxTries)) {
-    flags=(thumbnailsMap.size()>=maxTries) ? Preview::framestart : Preview::framerandom;
-    thumbnailsMap.addThumbnail(videoBackend->preview(flags) );
+    if(thumbnailsMap.size()>maxTries)
+      frameSelector=&plainFrameSelector;
+    else
+      frameSelector=&randomFrameSelector;
+    thumbnailsMap.addThumbnail(videoBackend->preview(frameSelector) );
     kDebug() << "try " << thumbnailsMap.size();
   }
   return thumbnailsMap.getBestThumbnail();
@@ -62,27 +85,27 @@ Thumbnail* PreviewingFile::getPreview(VideoBackendIFace* videoBackend, uint minV
 
 
 unsigned int PreviewingFile::getFPS() {
-  return this->fps;
+  return d->fps;
 }
 
-unsigned int PreviewingFile::getSecondsLength() {
-  return this->secondsLength;
+quint64 PreviewingFile::getMillisecondsLength() {
+  return d->millisecondsLength;
 }
 
 QString PreviewingFile::getFilePath() const {
-  return fileInfo.absoluteFilePath();
+  return d->fileInfo.absoluteFilePath();
 }
 
 bool PreviewingFile::isWide() {
-  return scalingWidth>scalingHeight;
+  return d->scalingWidth>d->scalingHeight;
 }
 
 unsigned int PreviewingFile::getScalingHeight() {
-  return this->scalingHeight;
+  return d->scalingHeight;
 }
 
 unsigned int PreviewingFile::getScalingWidth() {
-  return this->scalingWidth;
+  return d->scalingWidth;
 }
 
 #include "previewingfile.moc"

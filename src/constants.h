@@ -21,8 +21,4 @@
 #define H_CONSTANTS
 #define DBG_AREA 0
 
-namespace Preview {
-        enum frameflags { framerandom=0x1, framestart=0x2, frameend=0x4 };
-
-}
 #endif
