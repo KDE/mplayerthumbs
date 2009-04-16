@@ -20,15 +20,44 @@
 #include "phononbackend.h"
 #include <QtCore/QtGlobal>
 #include <phonon/phononnamespace.h>
+#include <phonon/mediaobject.h>
+#include "previewingfile.h"
+// #include <phonon/experimental/videowidget.h>
+#include "thumbnail.h"
+
 using namespace Phonon;
+
+// TODO: it seems that phonon MediaObject is not sync.
+// How to handle stream information?
+
+PhononBackend::PhononBackend(PreviewingFile* previewingFile, MPlayerThumbsCfg* cfg) 
+  : VideoBackendIFace(previewingFile, cfg)
+{
+  mediaObject=new MediaObject(previewingFile);
+  mediaObject->setCurrentSource(previewingFile->getFilePath());
+  QObject::connect(mediaObject, SIGNAL(totalTimeChanged (qint64)), previewingFile, SLOT(setTotalTime(quint64 )));
+//   videoWidget=new Experimental::VideoWidget();
+//   videoWidget->setVisible(false);
+//   createPath(mediaObject, videoWidget);
+}
+
+PhononBackend::~PhononBackend() {
+//   delete videoWidget;
+}
+
+
 Thumbnail* PhononBackend::preview(FrameSelector *frameSelector)
 {
-  return NULL;
+  mediaObject->pause();
+  mediaObject->seek(frameSelector->framePositionInMilliseconds(previewingFile));
+//   return new Thumbnail(new QImage(videoWidget->snapshot()), previewingFile);
 }
 
 bool PhononBackend::readStreamInformation()
 {
-  return false;
+  // FPS unneeded, probably
+  previewingFile->setTotalTime(mediaObject->totalTime());
+  return mediaObject->hasVideo();
 }
 
 bool PhononBackend::playerCannotPreview()

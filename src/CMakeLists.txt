@@ -9,7 +9,7 @@ kde4_add_kcfg_files(videopreview_PART_SRCS mplayerthumbs.kcfgc)
 
 kde4_add_plugin(videopreview ${videopreview_PART_SRCS})
 
-target_link_libraries(videopreview ${KDE4_KIO_LIBS})
+target_link_libraries(videopreview ${KDE4_KIO_LIBS} ${PHONON_LIBRARY} )
 
 install(TARGETS videopreview DESTINATION ${PLUGIN_INSTALL_DIR})
 

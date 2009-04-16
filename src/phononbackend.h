@@ -20,14 +20,26 @@
 #ifndef PHONONBACKEND_H
 #define PHONONBACKEND_H
 #include "videobackendiface.h"
+namespace Phonon {
+  class MediaObject;
+  namespace Experimental
+  {
+    class VideoWidget;
+  }
+}
 class PhononBackend : public VideoBackendIFace
 {
 public:
+  PhononBackend(PreviewingFile *previewingFile, MPlayerThumbsCfg* cfg);
+  virtual ~PhononBackend();
   virtual Thumbnail* preview (FrameSelector *frameSelector);
   virtual bool readStreamInformation ();
 
 protected:
   virtual bool playerCannotPreview ();
+private:
+  Phonon::MediaObject *mediaObject;
+  Phonon::Experimental::VideoWidget *videoWidget;
 };
 
 #endif // PHONONBACKEND_H

@@ -20,21 +20,21 @@
 #ifndef THUMBNAIL_H
 #define THUMBNAIL_H
 #include <QObject>
-class QPixmap;
+class QImage;
 class Thumbnail : public QObject
 {
 Q_OBJECT
 public:
-  explicit Thumbnail(QPixmap *pixmap, QObject *parent=0);
+  explicit Thumbnail(QImage *image, QObject *parent=0);
   ~Thumbnail();
   uint getVariance();
-  QPixmap *getPixmap();
-  bool pixmapIsValid();
+  QImage *getImage();
+  bool imageIsValid();
 
 private:
   void calculateVariance();
   uint variance;
-  QPixmap *pixmap;
+  QImage *image;
 };
 
 #endif // THUMBNAIL_H

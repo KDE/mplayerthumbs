@@ -89,7 +89,8 @@ bool MPlayerVideoBackend::readStreamInformation() {
         kDebug(DBG_AREA) << "videopreview: No information found, exiting\n";
         return false;
     }
-    previewingFile->setStreamInformation(findInfos.cap(1).toInt(), findInfos.cap(2).toInt() * 1000);
+    previewingFile->setTotalTime(findInfos.cap(2).toInt() * 1000);
+    previewingFile->setFPS(findInfos.cap(1).toInt());
     
     kDebug(DBG_AREA) << "videopreview: find length=" << previewingFile->getMillisecondsLength() << " ms, fps=" << previewingFile->getFPS() << endl;
     return true;
@@ -131,8 +132,8 @@ Thumbnail *MPlayerVideoBackend::preview(FrameSelector *frameSelector) {
 
     QString lastframe=QDir(tmpDirPath ).entryList( QStringList("*.jpg") ).last();
     kDebug(DBG_AREA) << "videopreview: LastFrame==" << lastframe << endl;
-    QPixmap *retpix = new QPixmap(tmpDirPath.append( lastframe ));
-    return new Thumbnail(retpix, previewingFile);
+    QImage *retImage = new QImage(tmpDirPath.append( lastframe ));
+    return new Thumbnail(retImage, previewingFile);
 }
 
 

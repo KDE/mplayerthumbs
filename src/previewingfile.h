@@ -31,7 +31,6 @@ public:
   PreviewingFile(const QString &filePath, uint scalingWidth, uint scalingHeight, QObject *parent = 0);
   ~PreviewingFile();
   bool isBlacklisted(const QStringList &blacklistedExtensions);
-  void setStreamInformation(uint fps, quint64 millisecondsLength);
   quint64 getMillisecondsLength();
   uint getFPS();
   QString getFilePath() const;
@@ -39,6 +38,9 @@ public:
   uint getScalingWidth();
   uint getScalingHeight();
   Thumbnail *getPreview(VideoBackendIFace *videoBackend, uint minVariance, uint maxTries);
+public slots:
+  void setTotalTime(quint64 totalTime);
+  void setFPS(uint fps);
 
 private:
   PreviewingFilePrivate *d;

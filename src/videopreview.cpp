@@ -71,32 +71,32 @@ bool VideoPreview::create(const QString &path, int width, int height, QImage &im
     }
     
     Thumbnail *thumbnail=previewingFile->getPreview(videoBackend, 40, 4);
-    if(!thumbnail || ! thumbnail->pixmapIsValid() ) return false;
+    if(!thumbnail || ! thumbnail->imageIsValid() ) return false;
     delete videoBackend;
     kDebug(DBG_AREA) << "got valid thumbnail, image variance: " << thumbnail->getVariance() << endl;
     /* From videocreator.cpp - xine_artsplugin
     Copyright (C) 2002 Simon MacMullen
     Copyright (C) 2003 Ewald Snel <ewald@rambo.its.tudelft.nl>
      * */
-    QPixmap *pix=thumbnail->getPixmap();
+    QPixmap pix=QPixmap::fromImage(*(thumbnail->getImage()));
     if(cfg->createStrips() ) {
-        QPainter painter( pix );
+        QPainter painter( &pix );
         QPixmap sprocket;
 
         kDebug(DBG_AREA) << "videopreview: using strip image sprocket: " << KStandardDirs::locate( "data", "videothumbnail/sprocket-small.png" ) << endl;
-        if (pix->height() < 60)
+        if (pix.height() < 60)
             sprocket = QPixmap(KStandardDirs::locate( "data", "videothumbnail/sprocket-small.png" ));
-        else if (pix->height() < 90)
+        else if (pix.height() < 90)
             sprocket = QPixmap(KStandardDirs::locate( "data", "videothumbnail/sprocket-medium.png" ));
         else
             sprocket = QPixmap(KStandardDirs::locate( "data", "videothumbnail/sprocket-large.png" ));
 
-        for (int y = 0; y < pix->height() + sprocket.height(); y += sprocket.height()) {
+        for (int y = 0; y < pix.height() + sprocket.height(); y += sprocket.height()) {
             painter.drawPixmap( 0, y, sprocket );
         }
 }
         // End of xine-artsplugin code
-    img = pix->toImage();
+    img = pix.toImage();
 
     return true;
 }

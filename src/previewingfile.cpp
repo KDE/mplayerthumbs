@@ -60,11 +60,6 @@ bool PreviewingFile::isBlacklisted(const QStringList& blacklistedExtensions) {
     return false;
 }
 
-void PreviewingFile::setStreamInformation(unsigned int fps, quint64 millisecondsLength) {
-  d->fps=fps;
-  d->millisecondsLength=millisecondsLength;
-}
-
 Thumbnail* PreviewingFile::getPreview(VideoBackendIFace* videoBackend, uint minVariance, unsigned int maxTries) {
   kDebug() << "getPreview with minVariance: " << minVariance << " and max tries: " << maxTries << endl;
   ThumbnailsMap thumbnailsMap;
@@ -105,6 +100,17 @@ unsigned int PreviewingFile::getScalingHeight() {
 unsigned int PreviewingFile::getScalingWidth() {
   return d->scalingWidth;
 }
+
+
+
+void PreviewingFile::setTotalTime(quint64 totalTime) {
+  d->millisecondsLength=totalTime;
+}
+
+void PreviewingFile::setFPS(unsigned int fps) {
+  d->fps=fps;
+}
+
 
 #include "previewingfile.moc"
 

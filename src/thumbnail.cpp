@@ -19,25 +19,24 @@
 
 #include "thumbnail.h"
 #include "constants.h"
-#include <QPixmap>
 #include <kdebug.h>
 #include <QImage>
 #include <QVarLengthArray>
 
-Thumbnail::Thumbnail(QPixmap* pixmap, QObject* parent) :
+Thumbnail::Thumbnail(QImage* image, QObject* parent) :
   QObject(parent)
 {
   this->variance=0;
-  this->pixmap=pixmap;
-  if(pixmapIsValid() ) calculateVariance();
+  this->image=image;
+  if(imageIsValid() ) calculateVariance();
 }
 
 Thumbnail::~Thumbnail() {
-  delete pixmap;
+  delete image;
 }
 
-bool Thumbnail::pixmapIsValid() {
-  return pixmap && ! pixmap->isNull();
+bool Thumbnail::imageIsValid() {
+  return image && ! image->isNull();
 }
 
 
@@ -45,20 +44,19 @@ unsigned int Thumbnail::getVariance() {
   return variance;
 }
 
-QPixmap* Thumbnail::getPixmap() {
-  return pixmap;
+QImage* Thumbnail::getImage() {
+  return image;
 }
 
 
 void Thumbnail::calculateVariance() {
-    QImage image = pixmap->toImage();
     uint delta=0;
     uint avg=0;
-    uint bytes=image.numBytes();
+    uint bytes=image->numBytes();
     uint STEPS=bytes/2;
     QVarLengthArray<uchar> pivot(STEPS);
     kDebug(DBG_AREA) << "Using " << STEPS << " steps\n";
-    uchar *bits=image.bits();
+    uchar *bits=image->bits();
     // First pass: get pivots and taking average
     for( uint i=0; i<STEPS ; i++ ){
         pivot[i]=bits[i*(bytes/STEPS)];
