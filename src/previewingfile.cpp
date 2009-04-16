@@ -66,13 +66,13 @@ void PreviewingFile::setStreamInformation(unsigned int fps, quint64 milliseconds
 }
 
 Thumbnail* PreviewingFile::getPreview(VideoBackendIFace* videoBackend, uint minVariance, unsigned int maxTries) {
-  kDebug() << "getPreview with minVariance: " << minVariance << endl;
+  kDebug() << "getPreview with minVariance: " << minVariance << " and max tries: " << maxTries << endl;
   ThumbnailsMap thumbnailsMap;
   RandomFrameSelector randomFrameSelector(25, 75);
   PlainFrameSelector plainFrameSelector(10000);
   FrameSelector *frameSelector;
   
-  while(thumbnailsMap.hasAGoodImageOrSurrenders(minVariance, maxTries)) {
+  while(! thumbnailsMap.hasAGoodImageOrSurrenders(minVariance, maxTries)) {
     if(thumbnailsMap.size()>maxTries)
       frameSelector=&plainFrameSelector;
     else

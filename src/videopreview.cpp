@@ -35,11 +35,14 @@
 #include "previewingfile.h"
 #include "thumbnail.h"
 #include "servicesfactory.h"
+
+
 extern "C"
 {
     KDE_EXPORT ThumbCreator *new_creator()
     {
-	kDebug() << "videoPreview: new_creator" << endl;
+	kDebug(DBG_AREA) << "videoPreview: new_creator" << endl;
+
         return new VideoPreview(new ServicesFactory());
     }
 }
@@ -53,7 +56,6 @@ VideoPreview::VideoPreview(ServicesFactory* servicesFactory) {
 VideoPreview::~VideoPreview()
 {
 }
-
 bool VideoPreview::create(const QString &path, int width, int height, QImage &img)
 {
     kDebug(DBG_AREA) << "videopreview svn\n";
@@ -65,12 +67,13 @@ bool VideoPreview::create(const QString &path, int width, int height, QImage &im
       delete cfg;
       delete videoBackend;
       return false;
+      kDebug(DBG_AREA) << "cannot preview: " << videoBackend->cannotPreview() << endl;
     }
     
     Thumbnail *thumbnail=previewingFile->getPreview(videoBackend, 40, 3);
     if(!thumbnail || ! thumbnail->pixmapIsValid() ) return false;
     delete videoBackend;
-    kDebug() << "got valid thumbnail" << endl;
+    kDebug(DBG_AREA) << "got valid thumbnail, image variance: " << thumbnail->getVariance() << endl;
     /* From videocreator.cpp - xine_artsplugin
     Copyright (C) 2002 Simon MacMullen
     Copyright (C) 2003 Ewald Snel <ewald@rambo.its.tudelft.nl>
