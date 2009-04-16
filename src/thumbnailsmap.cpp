@@ -21,7 +21,7 @@
 #include "thumbnail.h"
 
 void ThumbnailsMap::addThumbnail(Thumbnail* thumbnail) {
-  thumbnails.insert(thumbnail->getVariance(), thumbnail);
+  thumbnails.insertMulti(thumbnail->getVariance(), thumbnail);
 }
 
 bool ThumbnailsMap::hasAGoodImageOrSurrenders(unsigned int minVariance, unsigned int maxImages) {
