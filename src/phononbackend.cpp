@@ -22,8 +22,9 @@
 #include <phonon/phononnamespace.h>
 #include <phonon/mediaobject.h>
 #include "previewingfile.h"
-// #include <phonon/experimental/videowidget.h>
+#include <phonon/videowidget.h>
 #include "thumbnail.h"
+#include <kdebug.h>
 
 using namespace Phonon;
 
@@ -36,21 +37,27 @@ PhononBackend::PhononBackend(PreviewingFile* previewingFile, MPlayerThumbsCfg* c
   mediaObject=new MediaObject(previewingFile);
   mediaObject->setCurrentSource(previewingFile->getFilePath());
   QObject::connect(mediaObject, SIGNAL(totalTimeChanged (qint64)), previewingFile, SLOT(setTotalTime(quint64 )));
-//   videoWidget=new Experimental::VideoWidget();
-//   videoWidget->setVisible(false);
-//   createPath(mediaObject, videoWidget);
+  videoWidget=new VideoWidget();
+  videoWidget->hide();
+  createPath(mediaObject, videoWidget);
 }
 
 PhononBackend::~PhononBackend() {
-//   delete videoWidget;
+  delete videoWidget;
 }
 
 
 Thumbnail* PhononBackend::preview(FrameSelector *frameSelector)
 {
+#ifdef COMPILE_WITH_PHONON
   mediaObject->pause();
   mediaObject->seek(frameSelector->framePositionInMilliseconds(previewingFile));
-//   return new Thumbnail(new QImage(videoWidget->snapshot()), previewingFile);
+  QImage *image=new QImage(videoWidget->snapshot());
+  kDebug() << "videopreview: phonon snapshot at ms " << mediaObject->currentTime() << " of " << mediaObject->totalTime() << ", snapshot valid: " << ! image->isNull() << endl;
+  return new Thumbnail(image, previewingFile);
+#else
+  return NULL;
+#endif
 }
 
 bool PhononBackend::readStreamInformation()

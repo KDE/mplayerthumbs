@@ -22,13 +22,18 @@
 #include "videobackendiface.h"
 #include "mplayervideobackend.h"
 #include "mplayerthumbs.h"
+#include "phononbackend.h"
 
 PreviewingFile* ServicesFactory::previewingFile(const QString& filePath, unsigned int scalingWidth, unsigned int scalingHeight, QObject* parent) {
   return new PreviewingFile(filePath, scalingWidth, scalingHeight, parent);
 }
 
 VideoBackendIFace *ServicesFactory::videoBackend(PreviewingFile* previewingFile, MPlayerThumbsCfg* cfg) {
+#ifdef COMPILE_WITH_PHONON
+  return new PhononBackend(previewingFile, cfg);
+#else
   return new MPlayerVideoBackend(previewingFile, cfg);
+#endif
 }
 
 MPlayerThumbsCfg* ServicesFactory::config() {

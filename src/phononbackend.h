@@ -22,10 +22,7 @@
 #include "videobackendiface.h"
 namespace Phonon {
   class MediaObject;
-  namespace Experimental
-  {
-    class VideoWidget;
-  }
+  class VideoWidget;
 }
 class PhononBackend : public VideoBackendIFace
 {
@@ -39,7 +36,7 @@ protected:
   virtual bool playerCannotPreview ();
 private:
   Phonon::MediaObject *mediaObject;
-  Phonon::Experimental::VideoWidget *videoWidget;
+  Phonon::VideoWidget *videoWidget;
 };
 
 #endif // PHONONBACKEND_H
