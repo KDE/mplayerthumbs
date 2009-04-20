@@ -56,6 +56,7 @@ Thumbnail* PhononBackend::preview(FrameSelector *frameSelector)
   kDebug() << "videopreview: phonon snapshot at ms " << mediaObject->currentTime() << " of " << mediaObject->totalTime() << ", snapshot valid: " << ! image->isNull() << endl;
   return new Thumbnail(image, previewingFile);
 #else
+#warning Phonon support disabled
   return NULL;
 #endif
 }

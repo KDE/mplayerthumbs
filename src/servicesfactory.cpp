@@ -23,7 +23,7 @@
 #include "mplayervideobackend.h"
 #include "mplayerthumbs.h"
 #include "phononbackend.h"
-
+#define COMPILE_WITH_PHONON
 PreviewingFile* ServicesFactory::previewingFile(const QString& filePath, unsigned int scalingWidth, unsigned int scalingHeight, QObject* parent) {
   return new PreviewingFile(filePath, scalingWidth, scalingHeight, parent);
 }

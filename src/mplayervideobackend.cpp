@@ -24,10 +24,11 @@
 #include <KMD5>
 #include <ktempdir.h>
 #include <QProcess>
-#include "mplayerthumbscfg.h"
 #include <kstandarddirs.h>
 #include "previewingfile.h"
 #include "thumbnail.h"
+#include <kurl.h>
+#include "mplayerthumbs.h"
 
 ArgsCalculator::ArgsCalculator(PreviewingFile* previewingFile)
 {

@@ -30,7 +30,7 @@
 #include <keditlistbox.h>
 #include <kmessagebox.h>
 #include <kio/deletejob.h>
-
+#include <QDir>
 const QString MPlayerThumbsConfig::thumbnailsDir( QDir::homePath() + "/.thumbnails/" );
 
 
@@ -38,11 +38,15 @@ MPlayerThumbsConfig::MPlayerThumbsConfig(QWidget *parent, const QString &name, M
     : KConfigDialog(parent, name, config)
 {
     dialogUI=new Ui::configDialog();
+    mplayerConfigUI=new Ui::mplayerConfig();
     QWidget *dialogWidget=new QWidget();
+    QWidget *mplayerConfigUIWidget = new QWidget();
     dialogUI->setupUi(dialogWidget);
-    addPage( dialogWidget, i18n("General"), "mplayer" );
+    mplayerConfigUI->setupUi(mplayerConfigUIWidget);
+    addPage( dialogWidget, i18n("General"), "general" );
+    addPage( mplayerConfigUIWidget, i18n("MPlayer Backend"), "mplayer" );
     connect( dialogUI->clean_cache, SIGNAL(clicked() ), this, SLOT(cleanCache() ) );
-    setFaceType(Plain);
+//     setFaceType(Plain);
     if(!config->mplayerbin().length() )
         QTimer::singleShot( 100, this, SLOT(autoFindPath()));
 
@@ -63,7 +67,7 @@ void MPlayerThumbsConfig::autoFindPath()
     QString playerPath=KStandardDirs::findExe("mplayer-bin");
     if(playerPath.isNull() ) playerPath=KStandardDirs::findExe("mplayer");
     kDebug() << "Trying to set player path to " << playerPath << endl;
-    dialogUI->kcfg_mplayerbin->setPath( playerPath );
+    mplayerConfigUI->kcfg_mplayerbin->setPath( playerPath );
 }
 
 void MPlayerThumbsConfig::cleanCache() {
