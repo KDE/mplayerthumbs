@@ -16,5 +16,9 @@
         <label>Create strips in thumbnail</label>
         <default>true</default>
     </entry>
+    <entry name="backend" type="Int">
+        <label>Backend</label>
+        <default>1</default>
+    </entry>
     </group>
 </kcfg>

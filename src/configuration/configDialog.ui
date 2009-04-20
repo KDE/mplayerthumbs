@@ -6,11 +6,25 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>477</width>
-    <height>493</height>
+    <width>405</width>
+    <height>277</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Backend</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="KComboBox" name="kcfg_backend"/>
+     </item>
+    </layout>
+   </item>
    <item>
     <widget class="QCheckBox" name="kcfg_createStrips">
      <property name="text">
@@ -58,6 +72,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
+  </customwidget>
   <customwidget>
    <class>KEditListBox</class>
    <extends>QGroupBox</extends>

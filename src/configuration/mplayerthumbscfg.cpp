@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "mplayerthumbscfg.h"
+#include "videobackendiface.h"
 #include <q3vbox.h>
 #include <klineedit.h>
 #include <kpushbutton.h>
@@ -49,7 +50,8 @@ MPlayerThumbsConfig::MPlayerThumbsConfig(QWidget *parent, const QString &name, M
 //     setFaceType(Plain);
     if(!config->mplayerbin().length() )
         QTimer::singleShot( 100, this, SLOT(autoFindPath()));
-
+    dialogUI->kcfg_backend->addItem(i18n("MPlayer"), VideoBackendIFace::MPlayer );
+    dialogUI->kcfg_backend->addItem(i18n("Phonon"), VideoBackendIFace::Phonon );
 }
 
 MPlayerThumbsConfig::~MPlayerThumbsConfig()

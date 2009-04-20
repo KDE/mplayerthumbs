@@ -32,6 +32,7 @@ class VideoBackendIFace
 public:
   VideoBackendIFace(PreviewingFile *previewingFile, MPlayerThumbsCfg* cfg);
   bool cannotPreview();
+  enum Backend { MPlayer=0, Phonon=1 };
 
   virtual Thumbnail *preview(FrameSelector *frameSelector) = 0;
   virtual bool readStreamInformation() = 0;
