@@ -49,16 +49,11 @@ PhononBackend::~PhononBackend() {
 
 Thumbnail* PhononBackend::preview(FrameSelector *frameSelector)
 {
-#ifdef COMPILE_WITH_PHONON
   mediaObject->pause();
   mediaObject->seek(frameSelector->framePositionInMilliseconds(previewingFile));
   QImage *image=new QImage(videoWidget->snapshot());
   kDebug() << "videopreview: phonon snapshot at ms " << mediaObject->currentTime() << " of " << mediaObject->totalTime() << ", snapshot valid: " << ! image->isNull() << endl;
   return new Thumbnail(image, previewingFile);
-#else
-#warning Phonon support disabled
-  return NULL;
-#endif
 }
 
 bool PhononBackend::readStreamInformation()
