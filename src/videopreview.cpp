@@ -70,7 +70,7 @@ bool VideoPreview::create(const QString &path, int width, int height, QImage &im
       kDebug(DBG_AREA) << "cannot preview: " << videoBackend->cannotPreview() << endl;
     }
     
-    Thumbnail *thumbnail=previewingFile->getPreview(videoBackend, 40, 4);
+    Thumbnail *thumbnail=previewingFile->getPreview(videoBackend, 40, 4, sequenceIndex());
     if(!thumbnail || ! thumbnail->imageIsValid() ) return false;
     delete videoBackend;
     kDebug(DBG_AREA) << "got valid thumbnail, image variance: " << thumbnail->getVariance() << endl;

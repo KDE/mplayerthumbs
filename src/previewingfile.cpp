@@ -60,18 +60,41 @@ bool PreviewingFile::isBlacklisted(const QStringList& blacklistedExtensions) {
     return false;
 }
 
-Thumbnail* PreviewingFile::getPreview(VideoBackendIFace* videoBackend, uint minVariance, unsigned int maxTries) {
+float modulo1(float num) {
+    while(num > 1)
+      num -= 1;
+    return num;
+}
+
+Thumbnail* PreviewingFile::getPreview(VideoBackendIFace* videoBackend, uint minVariance, unsigned int maxTries, float sequenceIndex) {
   kDebug() << "getPreview with minVariance: " << minVariance << " and max tries: " << maxTries << endl;
   ThumbnailsMap thumbnailsMap;
-  RandomFrameSelector randomFrameSelector(25, 75);
+
+  unsigned int useStart = 25;
+  unsigned int useEnd = 75;
+
+  if(sequenceIndex) {
+    const unsigned int startPercent = 5;
+    const unsigned int endPercent = 85;
+    const unsigned int sequenceLength = 8; //Count of indices needed to iterate through the whole video once
+
+    //Compute sequence start between 5 and 85%
+    const unsigned int posPercent = (unsigned long)(startPercent+(modulo1((sequenceIndex / float(sequenceLength))) * (endPercent-startPercent) ) );
+    //Create random frames within the bound of ten percent around the sequence position
+    //This means that the first frame is between 5% and 15%, the second between 15% and 25%, the third between 25% and 35%, etc.
+    useStart = posPercent;
+    useEnd = posPercent+10;
+  }
+
+  RandomFrameSelector randomFrameSelector(useStart, useEnd);
   PlainFrameSelector plainFrameSelector(10000);
   FrameSelector *frameSelector = &randomFrameSelector;
-  
+
   while(! thumbnailsMap.hasAGoodImageOrSurrenders(minVariance, maxTries)) {
     Thumbnail *currentFrame=videoBackend->preview(frameSelector);
     thumbnailsMap.addThumbnail( currentFrame );
-    kDebug() << "try " << thumbnailsMap.size() << ", image variance: " << currentFrame->getVariance() << endl;;
-    if(thumbnailsMap.size()>=maxTries-1) frameSelector=&plainFrameSelector;
+    kDebug() << "try " << thumbnailsMap.size() << ", image variance: " << currentFrame->getVariance() << endl;
+    if(thumbnailsMap.size()>=maxTries-1 && !sequenceIndex) frameSelector=&plainFrameSelector;
   }
   return thumbnailsMap.getBestThumbnail();
 }

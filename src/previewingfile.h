@@ -37,7 +37,7 @@ public:
   bool isWide();
   uint getScalingWidth();
   uint getScalingHeight();
-  Thumbnail *getPreview(VideoBackendIFace *videoBackend, uint minVariance, uint maxTries);
+  Thumbnail *getPreview(VideoBackendIFace *videoBackend, uint minVariance, uint maxTries, float sequenceIndex);
 public slots:
   void setTotalTime(quint64 totalTime);
   void setFPS(uint fps);
