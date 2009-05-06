@@ -1,20 +1,6 @@
 [Desktop Entry]
 Type=Service
 Name=Video Files (MPlayerThumbs)
-Name[es]=Archivos de video (MPlayerThumbs)
-Name[et]=Videofailid (MPlayerThumbs)
-Name[fr]=Fichiers vidéo (MPlayerThumbs)
-Name[ga]=Comhaid Fhíse (MPlayerThumbs)
-Name[ja]=動画ファイル (MPlayerThumbs)
-Name[nb]=Videofiler (Mplayer minibilder)
-Name[nds]=Videodateien (MPlayer-Vöransichten)
-Name[pt]=Ficheiros de Vídeo (MPlayerThumbs)
-Name[pt_BR]=Arquivos de vídeo (MPlayerThumbs)
-Name[sv]=Videofiler (Mplayer miniatyrbilder)
-Name[tr]=Video Dosyaları (MPlayerThumbs)
-Name[uk]=Файли відео (MPlayerThumbs)
-Name[x-test]=xxVideo Files (MPlayerThumbs)xx
-Name[zh_TW]=影像檔（MPlayer Thumbs）
 ServiceTypes=ThumbCreator
 CacheThumbnail=true
 IgnoreMaximumSize=true
