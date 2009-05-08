@@ -16,13 +16,20 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
+
 #include "constants.h"
 #include "servicesfactory.h"
 #include "previewingfile.h"
 #include "videobackendiface.h"
 #include "mplayervideobackend.h"
 #include "mplayerthumbs.h"
-#include "phononbackend.h"
+#include "mplayerthumbs-config.h"
+
+
+#ifdef PHONON_API
+	#include "phononbackend.h"
+#endif
+
 PreviewingFile* ServicesFactory::previewingFile(const QString& filePath, unsigned int scalingWidth, unsigned int scalingHeight, QObject* parent) {
   return new PreviewingFile(filePath, scalingWidth, scalingHeight, parent);
 }
@@ -33,9 +40,13 @@ VideoBackendIFace *ServicesFactory::videoBackend(PreviewingFile* previewingFile,
     case VideoBackendIFace::MPlayer:
       kDebug(DBG_AREA) << "videopreview: Selected mplayer backend\n";
       return new MPlayerVideoBackend(previewingFile, cfg);
+	  break;
+#ifdef PHONON_API
     case VideoBackendIFace::Phonon:
       kDebug(DBG_AREA) << "videopreview: Selected phonon backend\n";
       return new PhononBackend(previewingFile, cfg);
+	  break;
+#endif
   }
   // Well, we should never be here...
   return NULL;
