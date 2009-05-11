@@ -8,6 +8,7 @@
         </entry>
 	<entry name="noextensions" type="StringList">
 	    <label>File extensions that mplayerthumbs should avoid</label>
+            <default>part</default>
 	</entry>
     <entry name="customargs" type="String">
         <label>Append custom arguments to mplayer</label>
