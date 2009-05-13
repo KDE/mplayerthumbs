@@ -63,7 +63,7 @@ bool VideoPreview::create(const QString &path, int width, int height, QImage &im
     PreviewingFile *previewingFile = servicesFactory->previewingFile(path, width, height, this);
     VideoBackendIFace *videoBackend = servicesFactory->videoBackend(previewingFile, cfg);
 
-    if( videoBackend->cannotPreview() || ! videoBackend->readStreamInformation() ) {
+    if( !videoBackend || videoBackend->cannotPreview() || ! videoBackend->readStreamInformation() ) {
       delete cfg;
       delete videoBackend;
       return false;
