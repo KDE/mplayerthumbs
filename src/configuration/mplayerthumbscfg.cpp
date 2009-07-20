@@ -20,7 +20,6 @@
 
 #include "mplayerthumbscfg.h"
 #include "videobackendiface.h"
-#include <q3vbox.h>
 #include <klineedit.h>
 #include <kpushbutton.h>
 #include <qlabel.h>
