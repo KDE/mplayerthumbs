@@ -27,12 +27,7 @@
 #include <qpixmap.h>
 #include <kio/thumbsequencecreator.h>
 
-class QProcess;
-class KTempDir;
-class KRandomSequence;
 class ServicesFactory;
-class QFileInfo;
-class MPlayerThumbsCfg;
 class VideoPreview : public QObject, public ThumbSequenceCreator
 {
 Q_OBJECT
