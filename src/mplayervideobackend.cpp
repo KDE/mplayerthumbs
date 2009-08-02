@@ -99,7 +99,7 @@ bool MPlayerVideoBackend::readStreamInformation() {
 
 
 MPlayerVideoBackend::~MPlayerVideoBackend() {
-  foreach(ArgsCalculator *argsCalculator, seekArguments.values()) delete argsCalculator;
+  foreach(ArgsCalculator *argsCalculator, seekArguments) delete argsCalculator;
   delete mplayerprocess;
   tryUnlink(tmpdir);
   delete tmpdir;
