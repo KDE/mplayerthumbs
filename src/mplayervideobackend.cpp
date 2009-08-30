@@ -121,8 +121,12 @@ Thumbnail *MPlayerVideoBackend::preview(FrameSelector *frameSelector) {
     KMD5 md5builder(previewingFile->getFilePath().toLatin1() );
     QString md5file=md5builder.hexDigest().data();
     QString tmpDirPath = tmpdir->name() + md5file + QDir::separator();
-    args << "-nocache" << "-idx" /*@TODO check if it's too slow..*/ << "-ao" << "null"/*"-nosound" << */<< "-speed" << "99"  /*<< "-sstep" << "5"*/
-            << "-vo" << QString("jpeg:outdir=%1").arg(tmpDirPath ) << "-vf" << QString("scale=%1:%2").arg(scalingWidth).arg(scalingHeight);
+    args << "-nocache" 
+    // << "-idx" /*@TODO check if it's too slow..*/ Update: probably yes...
+    << "-ao" << "null"/*"-nosound" << */<< "-speed" << "99"  /*<< "-sstep" << "5"*/
+            << "-vo" << QString("jpeg:outdir=%1").arg(tmpDirPath ) 
+//  << "-vf" << QString("scale=%1:%2").arg(scalingWidth).arg(scalingHeight) // This is probably just a waste of resources, as KDE API suggests to not scale the image.
+    ;
     args+=customargs;
 
     if (! startAndWaitProcess(args) ) return NULL;
