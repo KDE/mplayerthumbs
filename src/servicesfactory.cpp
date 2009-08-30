@@ -37,16 +37,19 @@ PreviewingFile* ServicesFactory::previewingFile(const QString& filePath, unsigne
 VideoBackendIFace *ServicesFactory::videoBackend(PreviewingFile* previewingFile, MPlayerThumbsCfg* cfg) {
   kDebug(DBG_AREA) << "videopreview: backend: " << cfg->backend() << endl;
   switch(cfg->backend() ) {
-    case VideoBackendIFace::MPlayer:
-      kDebug(DBG_AREA) << "videopreview: Selected mplayer backend\n";
-      return new MPlayerVideoBackend(previewingFile, cfg);
-	  break;
 #ifdef PHONON_API
     case VideoBackendIFace::Phonon:
       kDebug(DBG_AREA) << "videopreview: Selected phonon backend\n";
       return new PhononBackend(previewingFile, cfg);
 	  break;
+    case VideoBackendIFace::MPlayer:
+#else
+    #warning using mplayer as only backend
+    default:
 #endif
+      kDebug(DBG_AREA) << "videopreview: Selected mplayer backend\n";
+      return new MPlayerVideoBackend(previewingFile, cfg);
+      break;
   }
   // Well, we should never be here...
   return NULL;
