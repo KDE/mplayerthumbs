@@ -44,7 +44,9 @@ VideoBackendIFace *ServicesFactory::videoBackend(PreviewingFile* previewingFile,
 	  break;
     case VideoBackendIFace::MPlayer:
 #else
+#ifdef __GNUC__
     #warning using mplayer as only backend
+#endif
     default:
 #endif
       kDebug(DBG_AREA) << "videopreview: Selected mplayer backend\n";
