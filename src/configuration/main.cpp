@@ -33,7 +33,7 @@ static const char version[] = "0.1";
 
 int main(int argc, char **argv)
 {
-    KAboutData about("MPlayerThumbsConfig", 0, ki18n(I18N_NOOP("MPlayerThumbs Configuration Utility")), version, ki18n(description),
+    KAboutData about("MPlayerThumbsConfig", "mplayerthumbsconfig", ki18n(I18N_NOOP("MPlayerThumbs Configuration Utility")), version, ki18n(description),
                      KAboutData::License_GPL, ki18n("(C) 2006 Marco Gulino"));
     about.addAuthor( ki18n("Marco Gulino"), KLocalizedString(), "marco@kmobiletools.org" );
     KCmdLineArgs::init(argc, argv, &about);
