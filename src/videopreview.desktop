@@ -43,3 +43,4 @@ CacheThumbnail=true
 IgnoreMaximumSize=true
 MimeType=video/*;application/vnd.ms-asf;application/vnd.rn-realmedia;
 X-KDE-Library=videopreview
+HandleSequences=true
