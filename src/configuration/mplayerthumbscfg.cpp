@@ -55,6 +55,8 @@ MPlayerThumbsConfig::MPlayerThumbsConfig(QWidget *parent, const QString &name, M
 
 MPlayerThumbsConfig::~MPlayerThumbsConfig()
 {
+    delete dialogUI;
+    delete mplayerConfigUI;
 }
 
 #include "mplayerthumbscfg.moc"
