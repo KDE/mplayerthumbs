@@ -69,7 +69,7 @@ bool VideoPreview::create(const QString &path, int width, int height, QImage &im
       return false;
       kDebug(DBG_AREA) << "cannot preview: " << videoBackend->cannotPreview() << endl;
     }
-    
+
     Thumbnail *thumbnail=previewingFile->getPreview(videoBackend, 40, 4, sequenceIndex());
     if(!thumbnail || ! thumbnail->imageIsValid() ) return false;
     delete videoBackend;
@@ -83,13 +83,13 @@ bool VideoPreview::create(const QString &path, int width, int height, QImage &im
         QPainter painter( &pix );
         QPixmap sprocket;
 
-        kDebug(DBG_AREA) << "videopreview: using strip image sprocket: " << KStandardDirs::locate( "data", "videothumbnail/sprocket-small.png" ) << endl;
+        kDebug(DBG_AREA) << "videopreview: using strip image sprocket: " << KStandardDirs::locate( "data", QLatin1String( "videothumbnail/sprocket-small.png" ) ) << endl;
         if (pix.height() < 60)
-            sprocket = QPixmap(KStandardDirs::locate( "data", "videothumbnail/sprocket-small.png" ));
+            sprocket = QPixmap(KStandardDirs::locate( "data", QLatin1String( "videothumbnail/sprocket-small.png" ) ));
         else if (pix.height() < 90)
-            sprocket = QPixmap(KStandardDirs::locate( "data", "videothumbnail/sprocket-medium.png" ));
+            sprocket = QPixmap(KStandardDirs::locate( "data", QLatin1String( "videothumbnail/sprocket-medium.png" ) ));
         else
-            sprocket = QPixmap(KStandardDirs::locate( "data", "videothumbnail/sprocket-large.png" ));
+            sprocket = QPixmap(KStandardDirs::locate( "data", QLatin1String( "videothumbnail/sprocket-large.png" ) ));
 
         for (int y = 0; y < pix.height() + sprocket.height(); y += sprocket.height()) {
             painter.drawPixmap( 0, y, sprocket );

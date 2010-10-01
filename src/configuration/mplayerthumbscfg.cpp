@@ -31,7 +31,7 @@
 #include <kmessagebox.h>
 #include <kio/deletejob.h>
 #include <QDir>
-const QString MPlayerThumbsConfig::thumbnailsDir( QDir::homePath() + "/.thumbnails/" );
+const QString MPlayerThumbsConfig::thumbnailsDir( QDir::homePath() + QLatin1String( "/.thumbnails/" ));
 
 
 MPlayerThumbsConfig::MPlayerThumbsConfig(QWidget *parent, const QString &name, MPlayerThumbsCfg *config)
@@ -43,8 +43,8 @@ MPlayerThumbsConfig::MPlayerThumbsConfig(QWidget *parent, const QString &name, M
     QWidget *mplayerConfigUIWidget = new QWidget();
     dialogUI->setupUi(dialogWidget);
     mplayerConfigUI->setupUi(mplayerConfigUIWidget);
-    addPage( dialogWidget, i18n("General"), "general" );
-    addPage( mplayerConfigUIWidget, i18n("MPlayer Backend"), "mplayer" );
+    addPage( dialogWidget, i18n("General"), QLatin1String( "general" ) );
+    addPage( mplayerConfigUIWidget, i18n("MPlayer Backend"), QLatin1String( "mplayer" ) );
     connect( dialogUI->clean_cache, SIGNAL(clicked() ), this, SLOT(cleanCache() ) );
 //     setFaceType(Plain);
     if(!config->mplayerbin().length() )
@@ -67,8 +67,8 @@ MPlayerThumbsConfig::~MPlayerThumbsConfig()
  */
 void MPlayerThumbsConfig::autoFindPath()
 {
-    QString playerPath=KStandardDirs::findExe("mplayer-bin");
-    if(playerPath.isNull() ) playerPath=KStandardDirs::findExe("mplayer");
+    QString playerPath=KStandardDirs::findExe(QLatin1String( "mplayer-bin" ));
+    if(playerPath.isNull() ) playerPath=KStandardDirs::findExe(QLatin1String( "mplayer" ));
     kDebug() << "Trying to set player path to " << playerPath << endl;
     mplayerConfigUI->kcfg_mplayerbin->setPath( playerPath );
 }

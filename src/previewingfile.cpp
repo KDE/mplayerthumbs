@@ -54,7 +54,7 @@ bool PreviewingFile::isBlacklisted(const QStringList& blacklistedExtensions) {
     kDebug(DBG_AREA) << "videopreview: file extension=\"" << extension << "\"\n";
     if( extension.length() && !blacklistedExtensions.filter(extension, Qt::CaseInsensitive).isEmpty() )
     {
-        kDebug(DBG_AREA) << "videopreview: matched extension " << extension.prepend('.') << "; exiting.\n";
+        kDebug(DBG_AREA) << "videopreview: matched extension " << extension.prepend(QLatin1Char( '.' )) << "; exiting.\n";
         return true;
     }
     return false;
