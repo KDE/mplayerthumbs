@@ -69,15 +69,15 @@ void MPlayerThumbsConfig::autoFindPath()
 {
     QString playerPath=KStandardDirs::findExe(QLatin1String( "mplayer-bin" ));
     if(playerPath.isNull() ) playerPath=KStandardDirs::findExe(QLatin1String( "mplayer" ));
-    kDebug() << "Trying to set player path to " << playerPath << endl;
-    mplayerConfigUI->kcfg_mplayerbin->setPath( playerPath );
+    kDebug() << "Trying to set player path to" << playerPath;
+    mplayerConfigUI->kcfg_mplayerbin->setUrl( KUrl(playerPath) );
 }
 
 void MPlayerThumbsConfig::cleanCache() {
     int doClean = KMessageBox::warningContinueCancel(this, i18n("Cleaning the cache will delete all the previously generated thumbnails.\nNote that as there is a single common thumbnail cache, the thumbnails for all other file types will also be deleted.\nDo you really want to clean up the cache?") );
     if (doClean!= KMessageBox::Continue ) return;
 
-    kDebug() << "Cleaning cache from " << thumbnailsDir << endl;
+    kDebug() << "Cleaning cache from" << thumbnailsDir;
     KIO::del( thumbnailsDir );
 }
 
