@@ -36,7 +36,7 @@ PhononBackend::PhononBackend(PreviewingFile* previewingFile, MPlayerThumbsCfg* c
 {
   mediaObject=new MediaObject(previewingFile);
   mediaObject->setCurrentSource(previewingFile->getFilePath());
-  QObject::connect(mediaObject, SIGNAL(totalTimeChanged (qint64)), previewingFile, SLOT(setTotalTime(quint64 )));
+  QObject::connect(mediaObject, SIGNAL(totalTimeChanged(qint64)), previewingFile, SLOT(setTotalTime(quint64)));
   videoWidget=new VideoWidget();
   videoWidget->hide();
   createPath(mediaObject, videoWidget);

@@ -45,7 +45,7 @@ MPlayerThumbsConfig::MPlayerThumbsConfig(QWidget *parent, const QString &name, M
     mplayerConfigUI->setupUi(mplayerConfigUIWidget);
     addPage( dialogWidget, i18n("General"), QLatin1String( "general" ) );
     addPage( mplayerConfigUIWidget, i18n("MPlayer Backend"), QLatin1String( "mplayer" ) );
-    connect( dialogUI->clean_cache, SIGNAL(clicked() ), this, SLOT(cleanCache() ) );
+    connect( dialogUI->clean_cache, SIGNAL(clicked()), this, SLOT(cleanCache()) );
 //     setFaceType(Plain);
     if(!config->mplayerbin().length() )
         QTimer::singleShot( 100, this, SLOT(autoFindPath()));
