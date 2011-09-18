@@ -27,7 +27,6 @@
 #include <kstandarddirs.h>
 #include <kdebug.h>
 #include <qtimer.h>
-#include <keditlistbox.h>
 #include <kmessagebox.h>
 #include <kio/deletejob.h>
 #include <QDir>
