@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Service
 Name=Video Files (MPlayerThumbs)
+Name[bg]=Видео файлове (MPlayerThumbs)
 Name[ca]=Fitxers de vídeo (Miniatures de l'MPlayer)
 Name[cs]=Soubory videa (MPlayerThumbs)
 Name[da]=Videofiler (MPlayerThumbs)
@@ -13,6 +14,7 @@ Name[ga]=Comhaid Fhíse (MPlayerThumbs)
 Name[gl]=Ficheiros de vídeo (MPlayerThumbs)
 Name[hu]=Videofájlok (MplayerThumbs)
 Name[it]=File video (MPlayerThumbs)
+Name[km]=ឯកសារ​វីដេអូ (MPlayerThumbs)
 Name[nb]=Videofiler (Mplayer minibilder)
 Name[nds]=Videodateien (MPlayer-Vöransichten)
 Name[nl]=Videobestanden (MPlayer-miniaturen)
