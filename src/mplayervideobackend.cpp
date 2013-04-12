@@ -133,7 +133,7 @@ Thumbnail *MPlayerVideoBackend::preview(FrameSelector *frameSelector) {
 
     kDebug(DBG_AREA) << "videopreview: temp dir '" << tmpDirPath << "'\n";
 
-    if (QDir(tmpDirPath ).entryList( QStringList(QLatin1String( "*.jpg" )) ).isEmpty() ) return false;
+    if (QDir(tmpDirPath ).entryList( QStringList(QLatin1String( "*.jpg" )) ).isEmpty() ) return NULL;
 
     QString lastframe=QDir(tmpDirPath ).entryList( QStringList(QLatin1String( "*.jpg" )) ).last();
     kDebug(DBG_AREA) << "videopreview: LastFrame==" << lastframe << endl;
